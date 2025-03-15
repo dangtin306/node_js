@@ -1,0 +1,22 @@
+{
+  "name": "main_server",
+  "version": "1.0.0",
+  "main": "main.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node main_home.js",
+    "dev": "nodemon main_home.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "find-my-way": "^9.2.0",
+    "mongodb": "^6.13.1",
+    "raw-body": "^3.0.0"
+  }
+}
