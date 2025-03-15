@@ -1,5 +1,5 @@
 // main_process.js
-import get_text_image from '../../ai/images_text_multi.js';
+import get_text_image from './ai/images_text_multi.js';
 import router_module from './router_module.js';
 import { asyncLocalStorage } from './requestContext.js';
 import getRawBody from 'raw-body';
