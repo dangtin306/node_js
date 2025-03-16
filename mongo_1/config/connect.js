@@ -1,7 +1,7 @@
 import { MongoClient } from 'mongodb';
 
 // Cấu hình URI kết nối
-const uri = "mongodb://admin:180105@vip.tecom.pro:1801/?authMechanism=SCRAM-SHA-256";
+const uri = "mongodb://admin:180105@localhost:1801/?authMechanism=SCRAM-SHA-256";
 const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 // Biến lưu trữ kết nối tới database
