@@ -22,6 +22,11 @@
         "function": "test"
       },
       {
+        "uri": "giang",
+        "module": "./users/giang.js",
+        "function": "giang"
+      },
+      {
         "uri": "ads_open",
         "module": "./users/ads_open.js",
         "function": "ads_open"
