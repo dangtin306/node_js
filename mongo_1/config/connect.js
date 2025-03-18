@@ -1,7 +1,10 @@
 import { MongoClient } from 'mongodb';
 
-// Cấu hình URI kết nối
-const uri = "mongodb://admin:180105@localhost:1801/?authMechanism=SCRAM-SHA-256";
+import dotenv from 'dotenv';
+// Load biến môi trường từ file .env
+dotenv.config();
+// Lấy URI từ biến môi trường
+const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri, { useUnifiedTopology: true });
 
 // Biến lưu trữ kết nối tới database
