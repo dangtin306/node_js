@@ -1,5 +1,5 @@
 import { connectDB } from './connect.js';
-const db = await connectDB();
+const db =  await connectDB();
 
 export async function mongo_update_single(query, set) {
   try {
@@ -14,7 +14,7 @@ export async function mongo_update_single(query, set) {
       }
     } else {
       return {
-        mongo_status: "success",
+        mongo_status: "success", 
         mongo_results: "update_cancel",
       }
     }
