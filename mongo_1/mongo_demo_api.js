@@ -8,6 +8,7 @@ import {
 } from './config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
 export default async function mongo_demo_api() {
+
     const url_full = asyncLocalStorage.getStore().get('url_full');
     const url_param = asyncLocalStorage.getStore().get('url_param');
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');

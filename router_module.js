@@ -59,11 +59,13 @@ export default async function router_module(req, res, send_api_success, send_api
       route.handlers.forEach(handler => {
         // Ghép nối uri gốc với uri của handler
         let fullUri = route.uri;
+        console.log(fullUri);
         if (!handler.uri.startsWith('/')) {
           fullUri += '/' + handler.uri;
         } else {
           fullUri += handler.uri;
         }
+        
         const uriPattern = `${fullUri}/*`;
 
         // Đăng ký route chính

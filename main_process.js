@@ -89,6 +89,7 @@ export async function main_process_url(req, res, send_api_success, send_api_erro
             }
         }
     } catch (error) {
+        console.log(1234);
         send_api_error(error); // Gửi kết quả qua send_api_success
     }
 }
