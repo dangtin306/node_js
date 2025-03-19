@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Lấy đường dẫn đến file .env ở thư mục cha (2 cấp lên)
-const envPath = path.join(__dirname, '..', '..', '.env');
+const envPath = path.join(__dirname,  '..', '..', '.env');
 
 console.log(envPath);
 dotenv.config({ path: envPath });
