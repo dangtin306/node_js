@@ -45,13 +45,13 @@ const httpServer = http.createServer(httpOptions, app);
 // Khởi tạo server HTTPS
 const httpsServer = https.createServer(httpsOptions, app);
 
-// Lắng nghe HTTP trên cổng 2999 và HTTPS trên cổng 3000
+// Lắng nghe HTTP trên cổng 2999 và HTTPS trên cổng 2998
 httpServer.listen(2999, () => {
     console.log('HTTP server listening on port 2999');
 });
 
-httpsServer.listen(3000, () => {
-    console.log('HTTPS server listening on port 3000');
+httpsServer.listen(2998, () => {
+    console.log('HTTPS server listening on port 2998');
 });
 
 // Hàm xử lý request riêng
