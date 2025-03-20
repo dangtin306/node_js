@@ -1,19 +1,22 @@
-{
-  "main_1_test_1": {
+[
+  {
+    "router_name": "main_1_test_1",
     "uri": "/main_1/mongo_api_1",
     "handler": {
       "module": "./mongo_1/mongo_demo_api.js",
       "function": "mongo_demo_api"
     }
   },
-  "main_1_test_2": {
+  {
+    "router_name": "main_1_test_2",
     "uri": "/main_1/test_2",
     "handler": {
       "module": "./mongo_1/test_2.js",
       "function": "test2"
     }
   },
-  "users": {
+  {
+    "router_name": "users",
     "uri": "/main_2/users",
     "handlers": [
       {
@@ -33,4 +36,4 @@
       }
     ]
   }
-}
+]
