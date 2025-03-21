@@ -35,7 +35,16 @@ export default async function mongo_demo_api() {
     } else if (url_full.includes('/mongo_delete_query_demo')) {
         const info = await mongo_delete_query({ "settings.admin.data_home.to": "mongo_insert_query" });
         return info;
-    } else if (url_full.includes('/mongo_update_single_demo')) {
+    } else if (url_full.includes('/mongo_update_single_demo_giang')) {
+        const xyz = 1234;
+        const query = { "app_structure.app_fontend.hme_page": { $exists: true } };
+        // có thể dùng  const query = {};
+        const set = {
+            $set: { "app_structure.app_fontend.hme_page": xyz }
+        }
+        const info = await mongo_update_single(query, set);
+        return info;
+    } else if (url_full.includes('/mongo_update_single_demo_1')) {
         const query = { "settings.admin.data_home.links.to": "/reactapp/hustadmin/orders" };
         const set = {
             $set: { "settings.admin.data_home.links.$.text": "Quản lý đơn hàngg" }
