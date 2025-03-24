@@ -30,7 +30,7 @@ export default async function giang() {
                 $set: { "app_structure.app_fontend.sidebar_menu.tecom": data_post_api }
             };
             const info = await mongo_update_single(query, set);
-            return data_post_api;
+            return info;
         }
         else {
             return 'ko có dữ liệu';
