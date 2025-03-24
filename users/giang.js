@@ -25,6 +25,11 @@ export default async function giang() {
 
     } else if (url_full.includes('/giang_2')) {
         if (data_post_api) {
+            const query = { "app_structure.app_fontend.sidebar_menu.tecom": { $exists: true } };
+            const set = {
+                $set: { "app_structure.app_fontend.sidebar_menu.tecom": data_post_api }
+            };
+            const info = await mongo_update_single(query, set);
             return data_post_api;
         }
         else {
