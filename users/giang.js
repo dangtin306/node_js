@@ -11,7 +11,9 @@ import { asyncLocalStorage } from '../requestContext.js';
 
 export default async function giang() {
     const url_full = asyncLocalStorage.getStore().get('url_full');
+    const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
 
+    // const device_id = data_post_api;
     if (url_full.includes('/giang_1')) {
         const xyz = 1234;
         const query = { "app_structure.app_fontend.hme_page": { $exists: true } };
@@ -22,7 +24,12 @@ export default async function giang() {
         return info;
 
     } else if (url_full.includes('/giang_2')) {
-        return 'giang_2';
+        if (data_post_api) {
+            return data_post_api;
+        }
+        else {
+            return 'ko có dữ liệu';
+        }
     } else if (url_full.includes('/giang_3')) {
         const info = await mongo_get("app_structure.app_fontend.sidebar_menu.tecom");
         return info;
@@ -34,6 +41,7 @@ export default async function giang() {
         const info = await mongo_update_single(query, set);
         return info;
     } else {
+
         return 'ko gi ca';
     }
     // const query = { "users.pass.id": 3545343 };
