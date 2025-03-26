@@ -33,7 +33,7 @@ export default async function giang() {
             return info;
         }
         else {
-            return 'ko có dữ liệu';
+            return 'ko update';
         }
     } else if (url_full.includes('/giang_3')) {
         const info = await mongo_get("app_structure.app_fontend.sidebar_menu.tecom");
