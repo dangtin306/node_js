@@ -48,11 +48,10 @@ export default async function files() {
             acc[key] = value;
             return acc;
         }, {});
-  // Log ra console tất cả field text (trong body)
-  console.log('req.body:', req.body);
-
-  // Log ra console thông tin file
-  console.log('req.file:', req.file);
+        // Log ra console tất cả field text (trong body)
+        console.log('req.body:', req.body);
+        // Log ra console thông tin file
+        console.log('req.file:', req.file);
         const service = queryParams.service; // in ra 'save_default'
         const id_users = data_post_api.id_users;
 

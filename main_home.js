@@ -4,7 +4,7 @@ import http from 'http';
 import https from 'https';
 import main_process from "./main_process.js";
 import cors from "cors";
-
+import multer from 'multer';
 // Cấu hình HTTPS với chứng chỉ và khóa riêng
 const httpsOptions = {
     //   key: fs.readFileSync('path/to/private.key'),
