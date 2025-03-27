@@ -23,6 +23,8 @@ const app = express();
 app.use(cors()); // Tự động thêm CORS vào tất cả API
 // Middleware để phân tích cú pháp JSON
 app.use(express.json({ limit: '100mb' })); // You can adjust the limit as needed
+app.use(express.urlencoded({ limit: '100mb', extended: true }));
+
 // Middleware xử lý favicon
 app.use((req, res) => {
     if (req.url === '/favicon.ico') {
