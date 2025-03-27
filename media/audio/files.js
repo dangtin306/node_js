@@ -8,6 +8,7 @@ import {
     mongo_update_single
 } from '../../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../../requestContext.js';
+import multer from 'multer';
 
 export default async function files() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
@@ -26,7 +27,7 @@ export default async function files() {
                     path: "media.audio.files",
                     filter_field: "id_control",
                     filter_values: id_control
-                  };
+                };
                 const result = await mongo_get_multi(query, field);
                 return result;
                 // return info;
@@ -37,6 +38,24 @@ export default async function files() {
         else {
             return "ko có id_users";
         }
+    } else if (url_full.includes('/upload_files')) {
+        // Tách phần query sau dấu ?
+        const queryString = url_full.split('?')[1];
+
+        // Chuyển query string thành object
+        const queryParams = queryString.split('&').reduce((acc, param) => {
+            const [key, value] = param.split('=');
+            acc[key] = value;
+            return acc;
+        }, {});
+  // Log ra console tất cả field text (trong body)
+  console.log('req.body:', req.body);
+
+  // Log ra console thông tin file
+  console.log('req.file:', req.file);
+        const service = queryParams.service; // in ra 'save_default'
+        const id_users = data_post_api.id_users;
+
     } else {
         return "ko tìm thấy";
     }

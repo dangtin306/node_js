@@ -19,6 +19,9 @@ const httpOptions = {
 
 // Khởi tạo ứng dụng Express
 const app = express();
+
+const upload = multer();
+
 app.use(cors()); // Tự động thêm CORS vào tất cả API
 // Middleware để phân tích cú pháp JSON
 app.use(express.json({ limit: '100mb' })); // You can adjust the limit as needed
