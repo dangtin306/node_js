@@ -8,11 +8,13 @@ import {
     mongo_update_single
 } from '../../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../../requestContext.js';
-import multer from 'multer';
 
 export default async function files() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
     const url_full = asyncLocalStorage.getStore().get('url_full');
+    const url_param = asyncLocalStorage.getStore().get('url_param');
+    const req_body = asyncLocalStorage.getStore().get('req_body');
+
     if (url_full.includes('/files_users')) {
         let mongo_status = false;
         const id_users = data_post_api.id_users;
@@ -39,20 +41,8 @@ export default async function files() {
             return "ko có id_users";
         }
     } else if (url_full.includes('/upload_files')) {
-        // Tách phần query sau dấu ?
-        const queryString = url_full.split('?')[1];
-
-        // Chuyển query string thành object
-        const queryParams = queryString.split('&').reduce((acc, param) => {
-            const [key, value] = param.split('=');
-            acc[key] = value;
-            return acc;
-        }, {});
-        // Log ra console tất cả field text (trong body)
-        console.log('req.body:', req.body);
-        // Log ra console thông tin file
-        console.log('req.file:', req.file);
-        const service = queryParams.service; // in ra 'save_default'
+        const service = url_param.service; // in ra 'save_default''
+        console.log('req.body:', req_body);
         const id_users = data_post_api.id_users;
 
     } else {

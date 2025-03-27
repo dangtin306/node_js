@@ -40,6 +40,8 @@ export default async function main_process(req, res) {
             asyncLocalStorage.getStore().set('url_full', req.url);
             // Nếu muốn lưu vào asyncLocalStorage:
             asyncLocalStorage.getStore().set('url_param', url_param);
+
+            asyncLocalStorage.getStore().set('req_body', req.body);
             if (req.method === 'POST') {
                 try {
                     let body;
