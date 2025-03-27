@@ -35,5 +35,16 @@
         "function": "ads_open"
       }
     ]
+  },
+  {
+    "router_name": "audio_files",
+    "uri": "/main_2/audio",
+    "handlers": [
+      {
+        "uri": "files",
+        "module": "./media/audio/files.js",
+        "function": "files"
+      }
+    ]
   }
 ]
