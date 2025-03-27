@@ -12,8 +12,8 @@ import { asyncLocalStorage } from '../../requestContext.js';
 export default async function files() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
     const url_full = asyncLocalStorage.getStore().get('url_full');
-    let mongo_status = false;
     if (url_full.includes('/files_users')) {
+        let mongo_status = false;
         const id_users = data_post_api.id_users;
         if (id_users) {
             let id_control = await mongo_find_query({ "media.audio.users.id_users": id_users }, "id_control");
