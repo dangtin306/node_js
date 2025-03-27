@@ -1,5 +1,6 @@
 import {
     mongo_get,
+    mongo_get_multi,
     mongo_find_query,
     mongo_detect_single,
     mongo_insert_query,
@@ -20,8 +21,14 @@ export default async function files() {
             mongo_status = id_control.mongo_status;
             id_control = id_control.mongo_results;
             if (mongo_status == "success") {
-                return id_control;
-                // const info = await mongo_get("media.audio.files");
+                const query = { "media.audio.files": { $exists: true } };
+                const field = {
+                    path: "media.audio.files",
+                    filter_field: "id_control",
+                    filter_values: id_control
+                  };
+                const result = await mongo_get_multi(query, field);
+                return result;
                 // return info;
             } else {
                 return "ko có file";

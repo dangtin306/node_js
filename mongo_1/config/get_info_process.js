@@ -35,6 +35,68 @@ export async function mongo_get(fieldOrProjection) {
     };
   }
 }
+// Hàm mongo_get_multi sử dụng aggregation pipeline để lọc mảng files theo id_control
+export async function mongo_get_multi(query, field) {
+  try {
+    const collection = db.collection("collection_1"); // Thay bằng tên collection thực tế
+
+    // Xây dựng pipeline với $match
+    const pipeline = [{ $match: query }];
+
+    if (typeof field === "string") {
+      // Nếu field là chuỗi, chỉ thực hiện projection đơn giản
+      pipeline.push({
+        $project: {
+          _id: 0,
+          result: `$${field}`
+        }
+      });
+    } else if (typeof field === "object" && field.path) {
+      // Nếu field là object và có path, kiểm tra xem có cấu hình filter hay không
+      if (field.filter_field && Array.isArray(field.filter_values)) {
+        pipeline.push({
+          $project: {
+            _id: 0,
+            result: {
+              $filter: {
+                input: `$${field.path}`,
+                as: "item",
+                cond: { $in: [`$$item.${field.filter_field}`, field.filter_values] }
+              }
+            }
+          }
+        });
+      } else {
+        // Nếu không có cấu hình filter, chỉ cần projection theo field.path
+        pipeline.push({
+          $project: {
+            _id: 0,
+            result: `$${field.path}`
+          }
+        });
+      }
+    } else {
+      throw new Error("Invalid field parameter");
+    }
+
+    const results = await collection.aggregate(pipeline).toArray();
+
+    // Gộp kết quả từ tất cả các document thành một mảng duy nhất
+    const items = results.flatMap(doc => doc.result);
+
+    return {
+      mongo_status: "success",
+      mongo_results: items,
+    };
+  } catch (error) {
+    console.error("Error in mongo_get_multi:", error);
+    return {
+      mongo_status: "cancel",
+      mongo_results: error.message,
+    };
+  }
+}
+
 
 export async function mongo_detect_single(query) {
   if (!query || typeof query !== "object") {
