@@ -22,14 +22,14 @@ export default async function devices() {
         if (device_id) {
             // console.log(url_param);
             let detect_device = await mongo_detect_single({
-                "external_connect.micro_chip.device_id": device_id,
-                "external_connect.micro_chip.device_type": device_type
+                "external_connect.devices.device_id": device_id,
+                "external_connect.devices.device_type": device_type
             });
             detect_device = detect_device.mongo_results;
             if (detect_device == "detect_yes") {
                 return " có device_id";
             } else {
-                let query = { "external_connect.micro_chip.device_type": device_type };
+                let query = { "external_connect.devices.device_type": device_type };
                 let maxId = await mongo_json_count(query);
                 maxId = maxId.mongo_results;
                 const newDevice = {
@@ -40,7 +40,7 @@ export default async function devices() {
                     "created_date": new Date(),
                     "ver": 1
                 };
-                query = { "external_connect.micro_chip": newDevice };
+                query = { "external_connect.devices": newDevice };
                 const info = await mongo_insert_query(query);
                 return "ko có device_id đã thêm vô cơ sở dữ liệu" + info;
             }
@@ -57,14 +57,14 @@ export default async function devices() {
         if (device_id) {
             // console.log(url_param);
             let detect_device = await mongo_detect_single({
-                "external_connect.micro_chip.device_id": device_id,
-                "external_connect.micro_chip.device_type": device_type
+                "external_connect.devices.device_id": device_id,
+                "external_connect.devices.device_type": device_type
             });
             detect_device = detect_device.mongo_results;
             if (detect_device == "detect_yes") {
                 return " có device_id";
             } else {
-                let query = { "external_connect.micro_chip.device_type": device_type };
+                let query = { "external_connect.devices.device_type": device_type };
                 let maxId = await mongo_json_count(query);
                 maxId = maxId.mongo_results;
                 const newDevice = {
@@ -75,7 +75,7 @@ export default async function devices() {
                     "created_date": new Date(),
                     "ver": 1
                 };
-                query = { "external_connect.micro_chip": newDevice };
+                query = { "external_connect.devices": newDevice };
                 const info = await mongo_insert_query(query);
                 return "ko có device_id đã thêm vô cơ sở dữ liệu" + info;
             }
@@ -92,12 +92,12 @@ export default async function devices() {
             // console.log(id_devices);
             mongo_status = id_devices.mongo_status;
             id_devices = id_devices.mongo_results;
-            // console.log(id_devices);
+            console.log(id_devices);
 
             if (mongo_status == "success") {
-                const query = { "external_connect.micro_chip": { $exists: true } };
+                const query = { "external_connect.devices": { $exists: true } };
                 const field = {
-                    path: "external_connect.micro_chip",
+                    path: "external_connect.devices",
                     filter_field: "id",
                     filter_values: id_devices
                 };

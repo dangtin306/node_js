@@ -135,11 +135,11 @@ export async function mongo_json_count(query) {
     const collection = db.collection("collection_1");
     // Aggregation pipeline:
     // 1. $match: Lọc các document theo query truyền vào.
-    // 2. $project: Tạo trường "elementCount" chứa kích thước của mảng external_connect.micro_chip.
+    // 2. $project: Tạo trường "elementCount" chứa kích thước của mảng external_connect.devices.
     // 3. $group: Tính tổng các giá trị elementCount từ các document.
     const pipeline = [
       { $match: query },
-      { $project: { elementCount: { $size: "$external_connect.micro_chip" } } },
+      { $project: { elementCount: { $size: "$external_connect.devices" } } },
       { $group: { _id: null, totalCount: { $sum: "$elementCount" } } }
     ];
 
