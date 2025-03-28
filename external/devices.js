@@ -49,7 +49,7 @@ export default async function devices() {
             return "ko có device_id";
 
         }
-    } else if (url_full.includes('/device_id')) {
+    } else if (url_full.includes('/device_id_insert')) {
         // console.log(url_param);
         const device_id = url_param.device_id;
         const device_type = url_param.device_type;
