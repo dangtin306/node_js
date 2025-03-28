@@ -84,7 +84,7 @@ export default async function devices() {
             return "ko có device_id";
 
         }
-    } else if (url_full.includes('/device_users')) {
+    } else if (url_full.includes('/device_users_get')) {
         let mongo_status = false;
         const id_users = data_post_api.id_users;
         if (id_users) {
