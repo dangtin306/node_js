@@ -53,6 +53,7 @@ export default async function devices() {
         // console.log(url_param);
         const device_id = url_param.device_id;
         const device_type = url_param.device_type;
+        const device_model = url_param.device_model;
 
         if (device_id) {
             // console.log(url_param);
@@ -71,6 +72,7 @@ export default async function devices() {
                     "id": maxId + 1,
                     "device_id": device_id, // Thay đổi giá trị theo ý bạn
                     "device_type": device_type,
+                    "device_model": device_model,
                     "device_title": device_id,
                     "created_date": new Date(),
                     "ver": 1
