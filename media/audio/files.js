@@ -25,7 +25,7 @@ export default async function files() {
                 const query = { "media.audio.files": { $exists: true } };
                 const field = {
                     path: "media.audio.files",
-                    filter_field: "id_control",
+                    filter_field: "id",
                     filter_values: id_control
                 };
                 const result = await mongo_get_multi(query, field);
