@@ -46,5 +46,16 @@
         "function": "files"
       }
     ]
+  },
+  {
+    "router_name": "external",
+    "uri": "/main_2/external",
+    "handlers": [
+      {
+        "uri": "device",
+        "module": "./external/device.js",
+        "function": "device"
+      }
+    ]
   }
 ]

@@ -55,10 +55,6 @@ export default async function mongo_demo_api() {
         const query = data_post_api.query;
         const info = await mongo_insert_query(query);
         return info;
-    } else if (url_full.includes('/mongo_insert_query_api')) {
-        const query = data_post_api.query;
-        const info = await mongo_insert_query(query);
-        return info;
     } else if (url_full.includes('/mongo_detect_single_api')) {
         const query = data_post_api.query;
         const info = await mongo_detect_single(query);
