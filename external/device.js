@@ -88,7 +88,7 @@ export default async function device() {
         let mongo_status = false;
         const id_users = data_post_api.id_users;
         if (id_users) {
-            let id_control = await mongo_find_query({ "media.audio.users.id_users": id_users }, "id_control");
+            let id_control = await mongo_find_query({ "users.devices.id_users": id_users }, "id_devices");
             // console.log(id_control);
             mongo_status = id_control.mongo_status;
             id_control = id_control.mongo_results;
