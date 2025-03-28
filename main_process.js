@@ -40,8 +40,6 @@ export default async function main_process(req, res) {
             asyncLocalStorage.getStore().set('url_full', req.url);
             // Nếu muốn lưu vào asyncLocalStorage:
             asyncLocalStorage.getStore().set('url_param', url_param);
-
-            asyncLocalStorage.getStore().set('req_body', req.body);
             if (req.method === 'POST') {
                 try {
                     let body;
@@ -49,7 +47,7 @@ export default async function main_process(req, res) {
                         // Nếu stream còn khả năng đọc, sử dụng raw-body
                         body = await getRawBody(req, {
                             length: req.headers['content-length'],
-                            limit: '1mb', // Giới hạn kích thước nếu cần
+                            limit: '100mb', // Giới hạn kích thước nếu cần
                             encoding: true
                         });
                     } else if (req.body) {

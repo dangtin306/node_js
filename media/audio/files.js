@@ -42,7 +42,7 @@ export default async function files() {
         }
     } else if (url_full.includes('/upload_files')) {
         const service = url_param.service; // in ra 'save_default''
-        console.log('req.body:', req_body);
+        // console.log('req.body:', req_body);
         const id_users = data_post_api.id_users;
 
     } else {
