@@ -8,6 +8,11 @@ import {
     mongo_update_single
 } from '../../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../../requestContext.js';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default async function files() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
@@ -32,6 +37,7 @@ export default async function files() {
                 return result;
                 // return info;
             } else {
+
                 return "ko có file";
             }
         }
@@ -39,8 +45,27 @@ export default async function files() {
             return "ko có id_users";
         }
     } else if (url_full.includes('/upload_files_save')) {
-        
-        return "ko có";
+        const sourceFile = path.join(__dirname, "uploads", "upload.mp3");
+
+        const hard_drive = "D:";
+        const path_folder = "hustmedia/truyen-thanh/audio";
+        const path_file = "123.mp3";
+
+        const destDir = path.join(hard_drive, path_folder);
+        const destFile = path.join(destDir, path_file);
+
+        if (!fs.existsSync(destDir)) {
+            fs.mkdirSync(destDir, { recursive: true });
+        }
+
+        fs.copyFile(sourceFile, destFile, (err) => {
+            if (err) {
+                console.error("Error copying file:", err);
+            } else {
+                console.log(`File successfully copied to ${destFile}`);
+            }
+        });
+        return "đã save files";
     } else {
         return "ko tìm thấy";
     }
