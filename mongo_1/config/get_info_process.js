@@ -133,31 +133,28 @@ export async function mongo_json_count(query) {
 
   try {
     const collection = db.collection("collection_1");
-    // Aggregation pipeline:
-    // 1. $match: Lọc các document theo query truyền vào.
-    // 2. $project: Tạo trường "elementCount" chứa kích thước của mảng external_connect.devices.
-    // 3. $group: Tính tổng các giá trị elementCount từ các document.
     const pipeline = [
       { $match: query },
-      { $project: { elementCount: { $size: "$external_connect.devices" } } },
+      { $project: { elementCount: { $size: "$media.audio.files" } } },
       { $group: { _id: null, totalCount: { $sum: "$elementCount" } } }
     ];
 
     const aggResult = await collection.aggregate(pipeline).toArray();
-    const totalCount = (aggResult.length > 0) ? aggResult[0].totalCount : 0;
+    const totalCount = aggResult.length > 0 ? aggResult[0].totalCount : 0;
 
     return {
       mongo_status: "success",
       mongo_results: totalCount,
     };
   } catch (error) {
-    console.error("Error in count_json:", error);
+    console.error("Error in mongo_json_count:", error);
     return {
       mongo_status: "cancel",
       mongo_results: error.message,
     };
   }
 }
+
 
 
 

@@ -49,9 +49,9 @@ export default async function files() {
         const sourceFile = path.join(__dirname, "uploads", "upload.mp3");
         const hard_drive = "D:";
         const path_folder = "hustmedia/truyen-thanh/audio";
-        let query = { "media.audio.files": { $exists: true } };
-        let maxId = await mongo_json_count(query);
+        let maxId = await mongo_get("media.audio.files");
         maxId = maxId.mongo_results;
+        maxId = maxId.reduce((max, data) => data.id > max ? data.id : max, 0);
         const id_file = maxId + 1 ;
         const title = Math.floor(1000000000 + Math.random() * 9000000000).toString();
         const path_file = title + ".mp3";
