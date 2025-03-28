@@ -30,7 +30,7 @@ export default async function devices() {
             if (detect_device == "detect_yes") {
                 return " có device_id";
             } else {
-                let query = { "external_connect.devices.device_model": device_model };
+                let query = { "external_connect.devices": { $exists: true } };
                 let maxId = await mongo_json_count(query);
                 maxId = maxId.mongo_results;
                 const newDevice = {
