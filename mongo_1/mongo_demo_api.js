@@ -51,6 +51,11 @@ export default async function mongo_demo_api() {
         };
         const info = await mongo_update_single(query, set);
         return info;
+    } else if (url_full.includes('/mongo_update_single_demo_2')) {
+        const query = { "media.audio.files.id": 3 };
+        const set = {"media.audio.files.$.title": "Quản lý đơn hàngg" };
+        const info = await mongo_update_single(query, set);
+        return info;
     } else if (url_full.includes('/mongo_insert_query_api')) {
         const query = data_post_api.query;
         const info = await mongo_insert_query(query);

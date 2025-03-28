@@ -94,9 +94,6 @@ export default async function files() {
             }
         });
         return info;
-
-
-        return "đã save files";
     } else {
         return "ko tìm thấy";
     }
