@@ -28,8 +28,8 @@ app.use(express.json({ limit: '100mb' }));
 
 
 
-// Regular expression khớp với URL có chứa cả "upload_files" và "audio"
-app.post(/^(?=.*upload_files)(?=.*audio).*$/, upload_files_audio);
+// Regular expression khớp với URL có chứa cả "upload_files_start" và "audio"
+app.post(/^(?=.*upload_files_start)(?=.*audio).*$/, upload_files_audio);
 app.get('/play_audio_upload', (req, res) => {
     const audioPath = path.join(__dirname, 'media', 'audio', 'uploads', 'upload.mp3');
     res.sendFile(audioPath, {

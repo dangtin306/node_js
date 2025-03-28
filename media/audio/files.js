@@ -17,16 +17,16 @@ export default async function files() {
         let mongo_status = false;
         const id_users = data_post_api.id_users;
         if (id_users) {
-            let id_control = await mongo_find_query({ "users.audio.id_users": id_users }, "id_control");
-            // console.log(id_control);
-            mongo_status = id_control.mongo_status;
-            id_control = id_control.mongo_results;
+            let id_media = await mongo_find_query({ "users.audio.id_users": id_users }, "id_media");
+            // console.log(id_media);
+            mongo_status = id_media.mongo_status;
+            id_media = id_media.mongo_results;
             if (mongo_status == "success") {
                 const query = { "media.audio.files": { $exists: true } };
                 const field = {
                     path: "media.audio.files",
                     filter_field: "id",
-                    filter_values: id_control
+                    filter_values: id_media
                 };
                 const result = await mongo_get_multi(query, field);
                 return result;
@@ -38,7 +38,8 @@ export default async function files() {
         else {
             return "ko có id_users";
         }
-    } else if (url_full.includes('/upload_files')) {
+    } else if (url_full.includes('/upload_files_save')) {
+        
         return "ko có";
     } else {
         return "ko tìm thấy";
