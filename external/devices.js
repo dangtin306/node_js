@@ -84,7 +84,7 @@ export default async function devices() {
             return "ko có device_id";
 
         }
-    } else if (url_full.includes('/devices_users')) {
+    } else if (url_full.includes('/device_users')) {
         let mongo_status = false;
         const id_users = data_post_api.id_users;
         if (id_users) {
@@ -92,10 +92,12 @@ export default async function devices() {
             // console.log(id_devices);
             mongo_status = id_devices.mongo_status;
             id_devices = id_devices.mongo_results;
+            // console.log(id_devices);
+
             if (mongo_status == "success") {
-                const query = { "devices.id_devices": { $exists: true } };
+                const query = { "external_connect.micro_chip": { $exists: true } };
                 const field = {
-                    path: "devices.id_devices",
+                    path: "external_connect.micro_chip",
                     filter_field: "id",
                     filter_values: id_devices
                 };
