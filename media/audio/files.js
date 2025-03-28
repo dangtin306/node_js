@@ -53,7 +53,7 @@ export default async function files() {
         let maxId = await mongo_json_count(query);
         maxId = maxId.mongo_results;
         const id_file = maxId + 1 ;
-        const title = "345543435";
+        const title = Math.floor(1000000000 + Math.random() * 9000000000).toString();
         const path_file = title + ".mp3";
 
         const destDir = path.join(hard_drive, path_folder);
