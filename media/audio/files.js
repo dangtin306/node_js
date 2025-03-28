@@ -47,9 +47,14 @@ export default async function files() {
         }
     } else if (url_full.includes('/upload_files_save')) {
         const sourceFile = path.join(__dirname, "uploads", "upload.mp3");
-
         const hard_drive = "D:";
         const path_folder = "hustmedia/truyen-thanh/audio";
+        let query = { "media.audio.files": { $exists: true } };
+        let maxId = await mongo_json_count(query);
+        maxId = maxId.mongo_results;
+        const id_file = maxId + 1 ;
+        const title = "345543435";
+        const path_file = title + ".mp3";
 
         const destDir = path.join(hard_drive, path_folder);
         const destFile = path.join(destDir, path_file);
@@ -72,7 +77,7 @@ export default async function files() {
             "path_folder": path_folder,
             "path_file": path_file,
             "created_date": new Date(),
-            "title": created_date,
+            "title": title,
             "ver": 1
         };
         query = { "media.audio.files": newDevice };
@@ -88,7 +93,7 @@ export default async function files() {
                 console.log(`File successfully copied to ${destFile}`);
             }
         });
-        return query;
+        return info;
 
 
         return "đã save files";
