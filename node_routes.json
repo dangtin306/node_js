@@ -52,9 +52,9 @@
     "uri": "/main_2/external",
     "handlers": [
       {
-        "uri": "device",
-        "module": "./external/device.js",
-        "function": "device"
+        "uri": "devices",
+        "module": "./external/devices.js",
+        "function": "devices"
       }
     ]
   }

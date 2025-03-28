@@ -10,7 +10,7 @@ import {
 } from '../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
 
-export default async function device() {
+export default async function devices() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
     const url_full = asyncLocalStorage.getStore().get('url_full');
     const url_param = asyncLocalStorage.getStore().get('url_param');
@@ -88,16 +88,16 @@ export default async function device() {
         let mongo_status = false;
         const id_users = data_post_api.id_users;
         if (id_users) {
-            let id_control = await mongo_find_query({ "users.devices.id_users": id_users }, "id_devices");
-            // console.log(id_control);
-            mongo_status = id_control.mongo_status;
-            id_control = id_control.mongo_results;
+            let id_devices = await mongo_find_query({ "users.devices.id_users": id_users }, "id_devices");
+            // console.log(id_devices);
+            mongo_status = id_devices.mongo_status;
+            id_devices = id_devices.mongo_results;
             if (mongo_status == "success") {
-                const query = { "media.audio.files": { $exists: true } };
+                const query = { "devices.id_devices": { $exists: true } };
                 const field = {
-                    path: "media.audio.files",
-                    filter_field: "id_control",
-                    filter_values: id_control
+                    path: "devices.id_devices",
+                    filter_field: "id",
+                    filter_values: id_devices
                 };
                 const result = await mongo_get_multi(query, field);
                 return result;
