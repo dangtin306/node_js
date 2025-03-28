@@ -59,13 +59,13 @@ export default async function devices() {
             // console.log(url_param);
             let detect_device = await mongo_detect_single({
                 "external_connect.devices.device_id": device_id,
-                "external_connect.devices.device_type": device_type
+                "external_connect.devices.device_model": device_model
             });
             detect_device = detect_device.mongo_results;
             if (detect_device == "detect_yes") {
                 return " có device_id";
             } else {
-                let query = { "external_connect.devices.device_type": device_type };
+                let query = { "external_connect.devices.device_model": device_model };
                 let maxId = await mongo_json_count(query);
                 maxId = maxId.mongo_results;
                 const newDevice = {
