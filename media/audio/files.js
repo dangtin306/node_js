@@ -5,6 +5,7 @@ import {
     mongo_detect_single,
     mongo_insert_query,
     mongo_delete_query,
+    mongo_json_count,
     mongo_update_single
 } from '../../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../../requestContext.js';
@@ -49,7 +50,6 @@ export default async function files() {
 
         const hard_drive = "D:";
         const path_folder = "hustmedia/truyen-thanh/audio";
-        const path_file = "123.mp3";
 
         const destDir = path.join(hard_drive, path_folder);
         const destFile = path.join(destDir, path_file);
@@ -65,6 +65,32 @@ export default async function files() {
                 console.log(`File successfully copied to ${destFile}`);
             }
         });
+
+        const newDevice = {
+            "id": id_file,
+            "hard_drive": hard_drive, // Thay đổi giá trị theo ý bạn
+            "path_folder": path_folder,
+            "path_file": path_file,
+            "created_date": new Date(),
+            "title": created_date,
+            "ver": 1
+        };
+        query = { "media.audio.files": newDevice };
+        const info = await mongo_insert_query(query);
+        if (!fs.existsSync(destDir)) {
+            fs.mkdirSync(destDir, { recursive: true });
+        }
+
+        fs.copyFile(sourceFile, destFile, (err) => {
+            if (err) {
+                console.error("Error copying file:", err);
+            } else {
+                console.log(`File successfully copied to ${destFile}`);
+            }
+        });
+        return query;
+
+
         return "đã save files";
     } else {
         return "ko tìm thấy";

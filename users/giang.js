@@ -46,7 +46,6 @@ export default async function giang() {
         const info = await mongo_update_single(query, set);
         return info;
     } else {
-
         return 'ko gi ca';
     }
     // const query = { "users.pass.id": 3545343 };
