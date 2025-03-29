@@ -27,6 +27,7 @@ export default async function devices() {
                 "external_connect.devices.device_model": device_model
             });
             detect_device = detect_device.mongo_results;
+
             if (detect_device == "detect_yes") {
                 return " có device_id";
             } else {
@@ -42,7 +43,9 @@ export default async function devices() {
                     "created_date": new Date(),
                     "ver": 1
                 };
-                query = { "external_connect.devices": newDevice };
+
+                let query = { "external_connect.devices": newDevice };
+                console.log(query);
                 const info = await mongo_insert_query(query);
                 return "ko có device_id đã thêm vô cơ sở dữ liệu" + info;
             }
