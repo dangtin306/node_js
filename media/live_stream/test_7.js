@@ -160,7 +160,7 @@ io.on('connection', (socket) => {
     if (!isNaN(linkLiveValue)) {
       // Cập nhật inputUrl dựa trên giá trị linklive
       if (linkLiveValue == 1) inputUrl = 'http://127.0.0.1:8000/huyenkyanh';
-      else if (linkLiveValue == 2) inputUrl = 'http://truyenthanh.vov.link:8000/1C9DC294F850';
+      else if (linkLiveValue == 2) inputUrl = 'https://live.mediatech.vn/live/2859591eef2e92249b682db021f4247c364/playlist.m3u8';
       else if (linkLiveValue == 3) inputUrl = 'http://icecast.vov.link:8000/08D1F999EED0';
       else if (linkLiveValue == 4) inputUrl = 'http://icecast.vov.link:8000/48E729B55BEC';
       
