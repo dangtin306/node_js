@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 
 // Kết nối đến server
-const socket = io("http://localhost:3027");
+const socket = io("http://localhost:3028");
 
 socket.on("connect", () => {
   console.log("Đã kết nối Socket.IO");

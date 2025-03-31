@@ -3,11 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 // Thiết lập đường dẫn file và thư mục
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const outputDir = path.join(__dirname, 'aac_output');
 
 // Khởi tạo thư mục đầu ra
@@ -79,7 +80,36 @@ async function startFFmpeg() {
   ffmpegProcess.on('close', (code) => console.log(`FFmpeg exited with code ${code}`));
 }
 
-// Khởi động FFmpeg
+// Khởi động FFmpeg lần đầu
 startFFmpeg();
 
-console.log('ffmpegHandler.js đang chạy và xử lý luồng...');
+// Chạy server HTTP cho Socket.IO
+const httpServer = createServer();
+const io = new Server(httpServer, { cors: { origin: '*' } });
+
+io.on('connection', (socket) => {
+  console.log('Đã kết nối Socket.IO');
+  socket.on('updatelive', async (jsonData) => {
+    const linkLiveValue = jsonData.linklive;
+    if (!isNaN(linkLiveValue)) {
+      if (linkLiveValue == 1)
+        inputUrl = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8';
+      else if (linkLiveValue == 2)
+        inputUrl = 'https://live.mediatech.vn/live/2859591eef2e92249b682db021f4247c364/playlist.m3u8';
+      else if (linkLiveValue == 3)
+        inputUrl = 'http://icecast.vov.link:8000/08D1F999EED0';
+      else if (linkLiveValue == 4)
+        inputUrl = 'http://icecast.vov.link:8000/48E729B55BEC';
+      console.log(`Đã chuyển sang luồng: ${inputUrl}`);
+      await startFFmpeg();
+    }
+  });
+  socket.on('disconnect', () => {
+    console.log('Đã ngắt kết nối Socket.IO');
+  });
+});
+
+// Khởi động server Socket.IO
+httpServer.listen(3028, () => {
+  console.log('Socket.IO server running on port 3028');
+});

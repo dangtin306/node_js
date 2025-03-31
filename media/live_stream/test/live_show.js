@@ -5,7 +5,6 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const port = 3027;
 const outputDir = path.join(__dirname, 'aac_output');
 
@@ -80,7 +79,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-// Khởi động server
+// Khởi động server HTTP
 server.listen(port, () => {
   console.log(`Live AAC stream available at http://localhost:${port}/playlist.m3u8`);
 });
