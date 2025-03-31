@@ -108,7 +108,7 @@ async function startFFmpeg() {
 
 startFFmpeg();
 
-function getRandomDelay(min = 150, max = 300) {
+function getRandomDelay(min = 100, max = 250) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
