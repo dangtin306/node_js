@@ -20,18 +20,18 @@ export default async function devices() {
         const device_type = url_param.device_type;
         const device_model = url_param.device_model;
 
-        if (device_id) {
+        if (device_id && device_type && device_model) {
             // console.log("dsfdfs" + device_model);
             let detect_device = await mongo_detect_single({
-                "external_connect.devices.device_id": device_id,
-                "external_connect.devices.device_model": device_model
+                "external_connect.devices.lists.device_id": device_id,
+                "external_connect.devices.lists.device_model": device_model
             });
             detect_device = detect_device.mongo_results;
 
             if (detect_device == "detect_yes") {
                 return " có device_id";
             } else {
-                let maxId = await mongo_get("external_connect.devices");
+                let maxId = await mongo_get("external_connect.devices.lists");
                 maxId = maxId.mongo_results;
                 maxId = maxId.reduce((max, data) => data.id > max ? data.id : max, 0);
                 const newDevice = {
@@ -44,7 +44,7 @@ export default async function devices() {
                     "ver": 1
                 };
 
-                let query = { "external_connect.devices": newDevice };
+                let query = { "external_connect.devices.lists": newDevice };
                 console.log(query);
                 const info = await mongo_insert_query(query);
                 return "ko có device_id đã thêm vô cơ sở dữ liệu" + info;
@@ -65,9 +65,9 @@ export default async function devices() {
             console.log(id_devices);
 
             if (mongo_status == "success") {
-                const query = { "external_connect.devices": { $exists: true } };
+                const query = { "external_connect.devices.lists": { $exists: true } };
                 const field = {
-                    path: "external_connect.devices",
+                    path: "external_connect.devices.lists",
                     filter_field: "id",
                     filter_values: id_devices
                 };
