@@ -24,7 +24,7 @@ export default async function mongo_demo_api() {
         const info = await mongo_find_query({ "settings.admin.data_home.links.to": "/reactapp/hustadmin/member" }, "text");
         return info;
     } else if (url_full.includes('/find_block_data_2_demo')) {
-        const info = await mongo_find_query({ "settings.admin.data_home.links.to": "/reactapp/hustadmin/member" });
+        const info = await mongo_find_query({ "settings.admin.data_homejson.links.to": "/reactapp/hustadmin/member" });
         return info;
     } else if (url_full.includes('/mongo_detect_single_demo')) {
         const info = await mongo_detect_single({ "users.block_list.email_users6": "user1@example.com" });

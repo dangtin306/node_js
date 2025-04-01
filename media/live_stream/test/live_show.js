@@ -39,7 +39,7 @@ const server = http.createServer(async (req, res) => {
         const stats = fs.statSync(filePath);
         return stats.size > 4096;
       });
-      if (segments.length < 6) {
+      if (segments.length < 3) {
         res.writeHead(404);
         res.end('Not enough segments available');
         return;
