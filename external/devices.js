@@ -43,7 +43,6 @@ export default async function devices() {
                     "created_date": new Date(),
                     "ver": 1
                 };
-
                 let query = { "external_connect.devices.lists": newDevice };
                 console.log(query);
                 const info = await mongo_insert_query(query);
