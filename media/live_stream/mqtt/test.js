@@ -3,7 +3,7 @@ import readline from 'readline';
 
 // Cấu hình MQTT broker
 const brokerUrl = 'mqtt://vip.tecom.pro:1883';
-const topic = 'test/topic';
+const topic = 'servers/topic';
 
 // Kết nối tới MQTT broker
 const client = mqtt.connect(brokerUrl);
