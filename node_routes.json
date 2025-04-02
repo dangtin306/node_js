@@ -33,6 +33,11 @@
         "uri": "ads_open",
         "module": "./users/ads_open.js",
         "function": "ads_open"
+      },
+      {
+        "uri": "back_up",
+        "module": "./mongo_1/back_up.js",
+        "function": "back_up"
       }
     ]
   },

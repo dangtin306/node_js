@@ -30,7 +30,7 @@ export async function connectDB() {
   if (!db) {
     await client.connect();
     db = client.db("data_1");
-    console.log("Đã kết nối tới MongoDB");
+    console.log("Connected to MongoDB");
   }
   return db;
 }
