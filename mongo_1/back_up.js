@@ -15,7 +15,6 @@ export default async function back_up() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
     if (url_full.includes('/full')) {
         const info = await mongo_get({});
-
         return info;
     }
 }
