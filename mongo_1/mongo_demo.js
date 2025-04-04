@@ -14,10 +14,10 @@ export default async function mongo_demo() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
     // console.log(data_post_api.query);
     console.log('url_full' + url_full + 123);
-    if (url_full.includes('/memory_main_demo')) {
+    if (url_full.includes('/mongo_get_demo_1')) {
         const info = await mongo_get("memory_main");
         return info;
-    } else if (url_full.includes('/settings_admin_data_home')) {
+    } else if (url_full.includes('/mongo_get_demo_2')) {
         const info = await mongo_get("settings.admin.data_home");
         return info;
     } else if (url_full.includes('/find_block_data_1_demo')) {
