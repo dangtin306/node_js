@@ -46,6 +46,11 @@
         "uri": "back_up",
         "module": "./mongo_1/back_up.js",
         "function": "back_up"
+      },
+      {
+        "uri": "editor",
+        "module": "./users/editor.js",
+        "function": "editor"
       }
     ]
   },
