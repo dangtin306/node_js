@@ -41,6 +41,7 @@ export default async function devices() {
                     "device_model": device_model,
                     "device_title": device_id,
                     "created_date": new Date(),
+                    "status": true,
                     "ver": 1
                 };
                 let query = { "external_connect.devices.lists": newDevice };
@@ -51,7 +52,6 @@ export default async function devices() {
         }
         else {
             return "ko có device_id";
-
         }
     } else if (url_full.includes('/device_users_get')) {
         let mongo_status = false;
@@ -80,6 +80,8 @@ export default async function devices() {
         else {
             return "ko có id_users";
         }
+    }  else if (url_full.includes('/device_edit')) {
+        return "cần code";
     }
     else {
         return "ko tìm thấy";
