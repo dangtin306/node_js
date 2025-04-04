@@ -81,7 +81,7 @@ export default async function devices() {
             return "ko có id_users";
         }
     }  else if (url_full.includes('/device_edit')) {
-        return "cần code";
+        return data_post_api;
     }
     else {
         return "ko tìm thấy";
