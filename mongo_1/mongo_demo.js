@@ -13,7 +13,7 @@ export default async function mongo_demo() {
     const url_param = asyncLocalStorage.getStore().get('url_param');
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
     // console.log(data_post_api.query);
-    console.log('url_full' + url_full);
+    console.log('url_full' + url_full + 123);
     if (url_full.includes('/memory_main_demo')) {
         const info = await mongo_get("memory_main");
         return info;
