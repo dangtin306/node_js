@@ -11,25 +11,37 @@ import {
 // Import asyncLocalStorage to manage request-specific context.
 import { asyncLocalStorage } from '../requestContext.js';
 
-// The default exported asynchronous function for the editor route.
+
 export default async function editor() {
-    // Retrieve the full URL from the request context.
+    // Retrieve the full URL and posted data
     const url_full = asyncLocalStorage.getStore().get('url_full');
-
-    // Retrieve URL parameters from the request context.
-    const url_param = asyncLocalStorage.getStore().get('url_param');
-
-    // Retrieve data posted to the API from the request context.
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
 
-    // Check if the URL contains '/edit', indicating an edit operation.
+    // Check if the URL is meant for updating the device_title
     if (url_full.includes('/edit')) {
-        // TODO: Add code to handle editing logic here.
-        return "code here";
-    } 
-    // Check if the URL contains '/delete', indicating a delete operation.
-    else if (url_full.includes('/delete')) {
-        // TODO: Add code to handle deletion logic here.
-        return "code here";
+        // Extract necessary fields from the posted data
+        const { device_id, device_title } = data_post_api;
+
+        if (!device_id || !device_title) {
+            return { error: "device_id and device_title are required" };
+        }
+
+        // MongoDB query to update only the device_title field
+        const updateResult = await mongo_update_single(
+            // Query to find the correct device
+            { "external_connect.devices.lists.device_id": device_id }, 
+            {
+                $set: {
+                    "external_connect.devices.lists.$.device_title": device_title
+                }
+            }
+        );
+
+        return updateResult;
     }
+
+    //     else if (url_full.includes('/delete')) {
+    //         // TODO: Add code to handle deletion logic here.
+    //         return "code here";
+    //     }
 }
