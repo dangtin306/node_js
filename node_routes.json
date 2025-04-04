@@ -1,11 +1,19 @@
 [
   {
     "router_name": "main_1_test_1",
-    "uri": "/main_1/mongo_api_1",
-    "handler": {
-      "module": "./mongo_1/mongo_demo_api.js",
-      "function": "mongo_demo_api"
-    }
+    "uri": "/main_1/mongo_1",
+    "handler": [
+      {
+        "uri": "demo",
+        "module": "./mongo_1/mongo_demo_api.js",
+        "function": "mongo_demo"
+      },
+      {
+        "uri": "api",
+        "module": "./mongo_1/api_public.js",
+        "function": "api_public"
+      }
+    ]
   },
   {
     "router_name": "main_1_test_2",
