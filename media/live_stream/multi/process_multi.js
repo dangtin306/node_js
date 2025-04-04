@@ -25,14 +25,14 @@ const live2Dir = path.join(outputDir, 'live_2');
 });
 
 // Biến trạng thái
-let inputUrl1 = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8'; // Luồng cho live_1
-let inputUrl2 = 'https://live.mediatech.vn/live/285bfb777e354ec43038aa68950adbac3a4/playlist.m3u8'; // Luồng cho live_2
+let inputUrl1 = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8'; // Luồng mặc định cho live_1
+let inputUrl2 = 'https://live.mediatech.vn/live/285bfb777e354ec43038aa68950adbac3a4/playlist.m3u8'; // Luồng mặc định cho live_2
 let ffmpegProcess1 = null;
 let ffmpegProcess2 = null;
 let globalSegmentNumber1 = 0;
 let globalSegmentNumber2 = 0;
 
-// Cập nhật số thứ tự đoạn toàn cục cho từng luồng
+// Hàm cập nhật số thứ tự đoạn toàn cục
 function updateGlobalSegmentNumber(dir, currentNumber) {
   const files = fs.readdirSync(dir).filter(file => file.startsWith('segment_') && file.endsWith('.aac'));
   let max = currentNumber;
@@ -48,14 +48,11 @@ function updateGlobalSegmentNumber(dir, currentNumber) {
   return max + 1;
 }
 
-// Khởi động FFmpeg cho một luồng
+// Hàm khởi động FFmpeg cho một luồng
 async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber) {
-  if (ffmpegProcess) {
+  if (ffmpegProcess && !ffmpegProcess.killed) {
     console.log(`Killing previous ffmpegProcess (PID: ${ffmpegProcess.pid})`);
-    exec(`taskkill /F /PID ${ffmpegProcess.pid} /T`, (err, stdout, stderr) => {
-      if (err) console.error(`Lỗi khi kill: ${err}`);
-      else console.log(`FFmpeg đã được kill: ${stdout}`);
-    });
+    ffmpegProcess.kill('SIGTERM'); // Gửi tín hiệu dừng nhẹ nhàng
     await new Promise(resolve => ffmpegProcess.once('close', resolve));
   }
   let startNumber = updateGlobalSegmentNumber(liveDir, globalSegmentNumber);
@@ -103,7 +100,9 @@ const io = new Server(httpServer, { cors: { origin: '*' } });
 
 io.on('connection', (socket) => {
   console.log('Đã kết nối Socket.IO');
-  socket.on('updatelive', async (jsonData) => {
+
+  // Sự kiện điều khiển luồng live_1
+  socket.on('updatelive1', async (jsonData) => {
     const linkLiveValue = jsonData.linklive;
     if (!isNaN(linkLiveValue)) {
       let newInputUrl;
@@ -116,12 +115,32 @@ io.on('connection', (socket) => {
       else if (linkLiveValue == 4)
         newInputUrl = 'https://voa-ingest.akamaized.net/hls/live/2035200/161_352R/playlist.m3u8';
 
-      // Cập nhật luồng cho live_1 (có thể mở rộng cho live_2)
       inputUrl1 = newInputUrl;
       console.log(`Đã chuyển sang luồng cho live_1: ${inputUrl1}`);
       ffmpegProcess1 = await startFFmpeg(live1Dir, inputUrl1, ffmpegProcess1, globalSegmentNumber1);
     }
   });
+
+  // Sự kiện điều khiển luồng live_2
+  socket.on('updatelive2', async (jsonData) => {
+    const linkLiveValue = jsonData.linklive;
+    if (!isNaN(linkLiveValue)) {
+      let newInputUrl;
+      if (linkLiveValue == 1)
+        newInputUrl = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8';
+      else if (linkLiveValue == 2)
+        newInputUrl = 'https://live.mediatech.vn/live/285bfb777e354ec43038aa68950adbac3a4/playlist.m3u8';
+      else if (linkLiveValue == 3)
+        newInputUrl = 'http://icecast.vov.link:8000/08D1F999EED0';
+      else if (linkLiveValue == 4)
+        newInputUrl = 'https://voa-ingest.akamaized.net/hls/live/2035200/161_352R/playlist.m3u8';
+
+      inputUrl2 = newInputUrl;
+      console.log(`Đã chuyển sang luồng cho live_2: ${inputUrl2}`);
+      ffmpegProcess2 = await startFFmpeg(live2Dir, inputUrl2, ffmpegProcess2, globalSegmentNumber2);
+    }
+  });
+
   socket.on('disconnect', () => {
     console.log('Đã ngắt kết nối Socket.IO');
   });
