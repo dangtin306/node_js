@@ -64,7 +64,7 @@ async function startFFmpeg() {
     '-i', inputUrl,                   // Đường dẫn hoặc URL đầu vào
     '-vn',                            // Tắt video, chỉ xử lý âm thanh
     '-c:a', 'aac',                    // Mã hóa âm thanh sang định dạng AAC
-    '-af', 'volume=0.2',             // Giảm âm lượng xuống 12%
+    '-af', 'volume=0.3',             // Giảm âm lượng xuống 12%
     '-b:a', '64k',                    // Bitrate âm thanh là 64kbps
     '-fflags', '+genpts',             // Tạo PTS (presentation timestamps) nếu cần
     '-avoid_negative_ts', 'make_zero',// Tránh timestamps âm
@@ -72,7 +72,7 @@ async function startFFmpeg() {
     '-force_key_frames', 'expr:gte(t,n_forced*3)', // Đặt keyframe mỗi 3 giây
     '-f', 'segment',                  // Định dạng đầu ra là phân đoạn
     '-segment_time', '3',             // Mỗi đoạn dài 3 giây (giữ nguyên như yêu cầu)
-    '-segment_time_delta', '0.1',     // Độ lệch thời gian phân đoạn
+    '-segment_time_delta', '0.2',     // Độ lệch thời gian phân đoạn
     '-segment_format', 'aac',         // Định dạng tệp đầu ra là AAC
     '-flush_packets', '1',            // Xả gói dữ liệu ngay lập tức
     '-segment_start_number', `${startNumber}`, // Số bắt đầu của đoạn
