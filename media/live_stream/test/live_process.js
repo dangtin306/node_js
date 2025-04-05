@@ -64,7 +64,7 @@ async function startFFmpeg() {
     '-i', inputUrl,                   // Đường dẫn hoặc URL đầu vào
     '-vn',                            // Tắt video, chỉ xử lý âm thanh
     '-c:a', 'aac',                    // Mã hóa âm thanh sang định dạng AAC
-    '-af', 'volume=0.4',             // Giảm âm lượng xuống 12%
+    '-af', 'volume=0.2',             // Giảm âm lượng xuống 12%
     '-b:a', '64k',                    // Bitrate âm thanh là 64kbps
     '-fflags', '+genpts',             // Tạo PTS (presentation timestamps) nếu cần
     '-avoid_negative_ts', 'make_zero',// Tránh timestamps âm

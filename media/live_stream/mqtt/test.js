@@ -3,18 +3,19 @@ import readline from 'readline';
 
 // Cấu hình MQTT broker
 const brokerUrl = 'mqtt://vip.tecom.pro:1883';
-const topic = 'servers/topic';
+// Các topic cần subscribe: ở đây ESP32 gửi thông báo kết nối và phản hồi lệnh qua "server/response"
+// và bạn cũng muốn gửi lệnh qua "test/topic"
+const subscribeTopics = ['test/topic', 'server/response'];
 
 // Kết nối tới MQTT broker
 const client = mqtt.connect(brokerUrl);
 
-// Sự kiện khi kết nối thành công
 client.on('connect', () => {
     console.log('Đã kết nối tới MQTT broker');
-    // Đăng ký nhận tin nhắn từ topic
-    client.subscribe(topic, (err) => {
+    // Đăng ký nhận tin nhắn từ các topic cần lắng nghe
+    client.subscribe(subscribeTopics, (err) => {
         if (!err) {
-            console.log(`Đã subscribe vào topic: ${topic}`);
+            console.log(`Đã subscribe vào topics: ${subscribeTopics.join(', ')}`);
         } else {
             console.error('Lỗi khi subscribe:', err);
         }
@@ -22,12 +23,10 @@ client.on('connect', () => {
     console.log('Nhập tin nhắn để gửi tới topic test/topic (ví dụ: Bật LED):');
 });
 
-// Xử lý nhận tin nhắn từ MQTT broker
 client.on('message', (topic, message) => {
     console.log(`Nhận tin nhắn từ ${topic}: ${message.toString()}`);
 });
 
-// Sự kiện khi có lỗi
 client.on('error', (err) => {
     console.error('Lỗi kết nối:', err);
 });
@@ -38,9 +37,9 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-// Xử lý khi người dùng nhập tin nhắn
+// Xử lý khi người dùng nhập tin nhắn, gửi tin nhắn qua topic "test/topic"
 rl.on('line', (input) => {
-    client.publish(topic, input, {}, (err) => {
+    client.publish('test/topic', input, {}, (err) => {
         if (err) {
             console.error('Lỗi khi gửi tin nhắn:', err);
         } else {
