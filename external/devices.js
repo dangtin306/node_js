@@ -41,7 +41,8 @@ export default async function devices() {
                     "device_model": device_model,
                     "device_title": device_id,
                     "created_date": new Date(),
-                    "status": true,
+                    "status_device": true,
+                    "status_connect": true,
                     "ver": 1
                 };
                 let query = { "external_connect.devices.lists": newDevice };

@@ -2,7 +2,7 @@ import { connectDB } from './connect.js';
 const db = await connectDB();
 
 
-async function addTestFieldToAllDocuments() {
+export async function mongo_update_multi() {
   try {
     await client.connect();
     const collection = db.collection("collection_1");
@@ -19,5 +19,3 @@ async function addTestFieldToAllDocuments() {
     await client.close();
   }
 }
-
-addTestFieldToAllDocuments();
