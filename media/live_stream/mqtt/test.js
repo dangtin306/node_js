@@ -50,11 +50,18 @@ const rl = readline.createInterface({
 // Xử lý khi người dùng nhập tin nhắn, gửi tin nhắn qua topic "server/send/deviceId"
 rl.on('line', (input) => {
     const publishTopic = `server/send/${deviceId}`;
-    client.publish(publishTopic, input, {}, (err) => {
+    let message = input; // mặc định gửi nguyên tin nhắn nhập vào
+
+    // Nếu nhập "1", chuyển thành JSON với command_code: 1
+    if (input.trim() === "1") {
+        message = JSON.stringify({ command_code: 1 });
+    }
+
+    client.publish(publishTopic, message, {}, (err) => {
         if (err) {
             console.error('Lỗi khi gửi tin nhắn:', err);
         } else {
-            console.log(`Đã gửi tin nhắn đến topic ${publishTopic}: ${input}`);
+            console.log(`Đã gửi tin nhắn đến topic ${publishTopic}: ${message}`);
         }
     });
 });
