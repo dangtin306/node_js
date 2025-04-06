@@ -73,6 +73,11 @@
         "uri": "devices",
         "module": "./external/devices.js",
         "function": "devices"
+      },
+      {
+        "uri": "mqtt",
+        "module": "./external/mqtt/test.js",
+        "function": "mqtt_server"
       }
     ]
   }

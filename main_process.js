@@ -3,13 +3,16 @@ import get_text_image from './ai/images_text_multi.js';
 import router_module from './router_module.js';
 import { asyncLocalStorage } from './requestContext.js';
 import getRawBody from 'raw-body';
+import mqtt_server from './external/mqtt/home.js';
+
 // Hàm xử lý logic cho text image search
 const textImageSearch = () => {
     // Giả sử đây là hàm thực hiện logic tìm kiếm và có thể ném lỗi nếu có vấn đề
     // Nếu thành công, trả về dữ liệu
     return { message: "Kết quả tìm kiếm hình ảnh dựa trên văn bản" };
 };
-
+mqtt_server();
+console.log(12231231123);
 export default async function main_process(req, res) {
 
     const send_api_success = (data) => {
