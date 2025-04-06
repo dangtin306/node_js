@@ -18,12 +18,10 @@ function delay(ms) {
 }
 
 // Hàm dọn dẹp các file .aac cũ, chỉ giữ lại 20 file mới nhất
-function cleanupOldSegments() {
-  fs.readdir(outputDir, (err, files) => {
-    if (err) {
-      console.error("Error reading directory:", err);
-      return;
-    }
+async function cleanupOldSegments() {
+  try {
+    // Đọc danh sách file trong thư mục output
+    const files = await fs.promises.readdir(outputDir);
     let segments = files.filter(file => file.endsWith('.aac')).sort((a, b) => {
       const numA = parseInt(a.match(/\d+/)[0], 10);
       const numB = parseInt(b.match(/\d+/)[0], 10);
@@ -31,31 +29,35 @@ function cleanupOldSegments() {
     });
 
     // Lọc các file có kích thước > 4096 byte
-    segments = segments.filter(segment => {
+    const validSegments = [];
+    for (const segment of segments) {
       const filePath = path.join(outputDir, segment);
       try {
-        const stats = fs.statSync(filePath);
-        return stats.size > 4096;
+        const stats = await fs.promises.stat(filePath);
+        if (stats.size > 4096) {
+          validSegments.push(segment);
+        }
       } catch (err) {
-        console.error(err);
-        return false;
+        console.error(`Error getting stats for file ${filePath}:`, err);
       }
-    });
-
-    if (segments.length > 20) {
-      const deleteSegments = segments.slice(0, segments.length - 20);
-      deleteSegments.forEach(segment => {
-        const filePath = path.join(outputDir, segment);
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error(`Error deleting file ${filePath}:`, err);
-          } else {
-            console.log(`Deleted old file ${filePath}`);
-          }
-        });
-      });
     }
-  });
+
+    // Nếu số file hợp lệ vượt quá 20, xóa những file cũ hơn
+    if (validSegments.length > 20) {
+      const deleteSegments = validSegments.slice(0, validSegments.length - 20);
+      for (const segment of deleteSegments) {
+        const filePath = path.join(outputDir, segment);
+        try {
+          await fs.promises.unlink(filePath);
+          console.log(`Deleted old file ${filePath}`);
+        } catch (err) {
+          console.error(`Error deleting file ${filePath}:`, err);
+        }
+      }
+    }
+  } catch (err) {
+    console.error("Error cleaning up segments:", err);
+  }
 }
 
 // Chạy cleanupOldSegments mỗi 10 giây
@@ -91,10 +93,16 @@ const server = http.createServer(async (req, res) => {
         return numA - numB;
       });
 
+      // Sử dụng try/catch để tránh lỗi nếu file không tồn tại
       segments = segments.filter(segment => {
         const filePath = path.join(outputDir, segment);
-        const stats = fs.statSync(filePath);
-        return stats.size > 4096;
+        try {
+          const stats = fs.statSync(filePath);
+          return stats.size > 4096;
+        } catch (err) {
+          console.error(`Error accessing file ${filePath}:`, err);
+          return false;
+        }
       });
 
       if (segments.length < 3) {

@@ -2,7 +2,6 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { exec } from 'child_process';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
@@ -10,27 +9,32 @@ import { Server } from 'socket.io';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const outputDir = path.join(__dirname, 'aac_output');
-const live1Dir = path.join(outputDir, 'live_1');
-const live2Dir = path.join(outputDir, 'live_2');
+const liveInfoPath = path.join(__dirname, 'live_info.json');
 
-// Khởi tạo thư mục đầu ra
-[live1Dir, live2Dir].forEach(dir => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+// Đọc thông tin từ live_info.json
+const liveInfo = JSON.parse(fs.readFileSync(liveInfoPath, 'utf-8'));
+
+// Khởi tạo thư mục đầu ra và biến trạng thái
+const liveDirs = {};
+const inputUrls = {};
+const ffmpegProcesses = {};
+const globalSegmentNumbers = {};
+
+liveInfo.forEach(info => {
+  const liveDir = path.join(outputDir, info.live_control);
+  liveDirs[info.live_control] = liveDir;
+  inputUrls[info.live_control] = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8'; // Luồng mặc định
+  ffmpegProcesses[info.live_control] = null;
+  globalSegmentNumbers[info.live_control] = 0;
+
+  if (!fs.existsSync(liveDir)) {
+    fs.mkdirSync(liveDir, { recursive: true });
   } else {
-    fs.readdirSync(dir).forEach(file => {
-      fs.unlinkSync(path.join(dir, file));
+    fs.readdirSync(liveDir).forEach(file => {
+      fs.unlinkSync(path.join(liveDir, file));
     });
   }
 });
-
-// Biến trạng thái
-let inputUrl1 = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8'; // Luồng mặc định cho live_1
-let inputUrl2 = 'https://live.mediatech.vn/live/285bfb777e354ec43038aa68950adbac3a4/playlist.m3u8'; // Luồng mặc định cho live_2
-let ffmpegProcess1 = null;
-let ffmpegProcess2 = null;
-let globalSegmentNumber1 = 0;
-let globalSegmentNumber2 = 0;
 
 // Hàm cập nhật số thứ tự đoạn toàn cục
 function updateGlobalSegmentNumber(dir, currentNumber) {
@@ -52,7 +56,7 @@ function updateGlobalSegmentNumber(dir, currentNumber) {
 async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber) {
   if (ffmpegProcess && !ffmpegProcess.killed) {
     console.log(`Killing previous ffmpegProcess (PID: ${ffmpegProcess.pid})`);
-    ffmpegProcess.kill('SIGTERM'); // Gửi tín hiệu dừng nhẹ nhàng
+    ffmpegProcess.kill('SIGTERM');
     await new Promise(resolve => ffmpegProcess.once('close', resolve));
   }
   let startNumber = updateGlobalSegmentNumber(liveDir, globalSegmentNumber);
@@ -86,12 +90,31 @@ async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber
   return newProcess;
 }
 
-// Khởi động FFmpeg lần đầu cho cả hai luồng
-startFFmpeg(live1Dir, inputUrl1, ffmpegProcess1, globalSegmentNumber1).then(process => {
-  ffmpegProcess1 = process;
-});
-startFFmpeg(live2Dir, inputUrl2, ffmpegProcess2, globalSegmentNumber2).then(process => {
-  ffmpegProcess2 = process;
+// Hàm chung xử lý cập nhật luồng
+async function handleStreamUpdate(liveControl, jsonData) {
+  const linkLiveValue = jsonData.linklive;
+  if (isNaN(linkLiveValue)) return;
+
+  let newInputUrl;
+  if (linkLiveValue == 1)
+    newInputUrl = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8';
+  else if (linkLiveValue == 2)
+    newInputUrl = 'https://live.mediatech.vn/live/285bfb777e354ec43038aa68950adbac3a4/playlist.m3u8';
+  else if (linkLiveValue == 3)
+    newInputUrl = 'http://icecast.vov.link:8000/08D1F999EED0';
+  else if (linkLiveValue == 4)
+    newInputUrl = 'https://voa-ingest.akamaized.net/hls/live/2035200/161_352R/playlist.m3u8';
+
+  inputUrls[liveControl] = newInputUrl;
+  console.log(`Đã chuyển sang luồng cho ${liveControl}: ${newInputUrl}`);
+  ffmpegProcesses[liveControl] = await startFFmpeg(liveDirs[liveControl], newInputUrl, ffmpegProcesses[liveControl], globalSegmentNumbers[liveControl]);
+}
+
+// Khởi động FFmpeg lần đầu cho tất cả các luồng
+liveInfo.forEach(info => {
+  startFFmpeg(liveDirs[info.live_control], inputUrls[info.live_control], ffmpegProcesses[info.live_control], globalSegmentNumbers[info.live_control]).then(process => {
+    ffmpegProcesses[info.live_control] = process;
+  });
 });
 
 // Chạy server HTTP cho Socket.IO
@@ -101,44 +124,8 @@ const io = new Server(httpServer, { cors: { origin: '*' } });
 io.on('connection', (socket) => {
   console.log('Đã kết nối Socket.IO');
 
-  // Sự kiện điều khiển luồng live_1
-  socket.on('updatelive1', async (jsonData) => {
-    const linkLiveValue = jsonData.linklive;
-    if (!isNaN(linkLiveValue)) {
-      let newInputUrl;
-      if (linkLiveValue == 1)
-        newInputUrl = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8';
-      else if (linkLiveValue == 2)
-        newInputUrl = 'https://live.mediatech.vn/live/285bfb777e354ec43038aa68950adbac3a4/playlist.m3u8';
-      else if (linkLiveValue == 3)
-        newInputUrl = 'http://icecast.vov.link:8000/08D1F999EED0';
-      else if (linkLiveValue == 4)
-        newInputUrl = 'https://voa-ingest.akamaized.net/hls/live/2035200/161_352R/playlist.m3u8';
-
-      inputUrl1 = newInputUrl;
-      console.log(`Đã chuyển sang luồng cho live_1: ${inputUrl1}`);
-      ffmpegProcess1 = await startFFmpeg(live1Dir, inputUrl1, ffmpegProcess1, globalSegmentNumber1);
-    }
-  });
-
-  // Sự kiện điều khiển luồng live_2
-  socket.on('updatelive2', async (jsonData) => {
-    const linkLiveValue = jsonData.linklive;
-    if (!isNaN(linkLiveValue)) {
-      let newInputUrl;
-      if (linkLiveValue == 1)
-        newInputUrl = 'https://str.vov.gov.vn/vovlive/vov1vov5Vietnamese.sdp_aac/playlist.m3u8';
-      else if (linkLiveValue == 2)
-        newInputUrl = 'https://live.mediatech.vn/live/285bfb777e354ec43038aa68950adbac3a4/playlist.m3u8';
-      else if (linkLiveValue == 3)
-        newInputUrl = 'http://icecast.vov.link:8000/08D1F999EED0';
-      else if (linkLiveValue == 4)
-        newInputUrl = 'https://voa-ingest.akamaized.net/hls/live/2035200/161_352R/playlist.m3u8';
-
-      inputUrl2 = newInputUrl;
-      console.log(`Đã chuyển sang luồng cho live_2: ${inputUrl2}`);
-      ffmpegProcess2 = await startFFmpeg(live2Dir, inputUrl2, ffmpegProcess2, globalSegmentNumber2);
-    }
+  liveInfo.forEach(info => {
+    socket.on(info.socket_control, (jsonData) => handleStreamUpdate(info.live_control, jsonData));
   });
 
   socket.on('disconnect', () => {

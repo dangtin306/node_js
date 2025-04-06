@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "live_control": "live_1",
+        "socket_control": "socket_live_1"
+    },
+    {
+        "id": 2,
+        "live_control": "live_2",
+        "socket_control": "socket_live_2"
+    }
+]
