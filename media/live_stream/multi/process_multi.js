@@ -66,7 +66,7 @@ async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber
     '-i', inputUrl,
     '-vn',
     '-c:a', 'aac',
-    '-af', 'volume=0.4',
+    '-af', 'volume=1',
     '-b:a', '64k',
     '-fflags', '+genpts',
     '-avoid_negative_ts', 'make_zero',

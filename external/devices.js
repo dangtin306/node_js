@@ -9,6 +9,7 @@ import {
     mongo_update_single
 } from '../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
+import mqtt_server from '../../main_server/external/mqtt/home.js';
 
 export default async function devices() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
@@ -81,7 +82,17 @@ export default async function devices() {
         else {
             return "ko có id_users";
         }
-    }  else if (url_full.includes('/device_edit')) {
+    } else if (url_full.includes('/device_edit')) {
+        return data_post_api;
+    } else if (url_full.includes('/volume_control')) {
+        let command_action = data_post_api.command_action;
+
+        // Scale từ 0–100 thành 0–21
+        let scaled_value = Math.round((command_action / 100) * 21);
+
+        // Gán lại vào object
+        data_post_api.command_action = scaled_value;
+        mqtt_server(data_post_api.device_id, data_post_api);
         return data_post_api;
     }
     else {

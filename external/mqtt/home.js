@@ -2,28 +2,43 @@ import mqtt from 'mqtt';
 import readline from 'readline';
 
 const brokerUrl = 'mqtt://vip.tecom.pro:1883';
-const deviceId = 'f850119e9ef0';
 
-// Flag to ensure the function runs only once
+// Flag để đảm bảo khởi tạo MQTT server chỉ một lần
 let isMqttServerInitialized = false;
+// Biến lưu trữ client để sử dụng cho các lần gọi sau
+let client = null;
 
-export default async function mqtt_server() {
-    // If already initialized, skip subsequent calls
+export default async function mqtt_server(device_id, passedMessage) {
+    // Nếu server đã khởi tạo rồi, chỉ cần gửi message nếu có và thoát luôn
     if (isMqttServerInitialized) {
-        console.log('MQTT server has already been initialized. Skipping this call.');
+        if (passedMessage) {
+            const publishTopic = `server/send/${device_id}`;
+            let messageToSend;
+            if (typeof passedMessage === 'object') {
+                messageToSend = JSON.stringify(passedMessage);
+            } else {
+                messageToSend = passedMessage;
+            }
+            client.publish(publishTopic, messageToSend, {}, (err) => {
+                if (err) {
+                    console.error('Error sending message:', err);
+                } else {
+                    console.log(`Message sent to topic ${publishTopic}: ${messageToSend}`);
+                }
+            });
+        }
         return;
     }
     isMqttServerInitialized = true;
 
-    // Topics to subscribe to
-    const subscribeTopics = [`server/send/${deviceId}`, 'device/send/#'];
+    // Các topics cần subscribe
+    const subscribeTopics = [`server/send/${device_id}`, 'device/send/#'];
 
-    // Connect to the MQTT broker
-    const client = mqtt.connect(brokerUrl);
+    // Kết nối đến MQTT broker
+    client = mqtt.connect(brokerUrl);
 
     client.on('connect', () => {
         console.log('Connected to MQTT broker');
-        // Subscribe to the defined topics
         client.subscribe(subscribeTopics, (err) => {
             if (!err) {
                 console.log(`Subscribed to topics: ${subscribeTopics.join(', ')}`);
@@ -31,11 +46,32 @@ export default async function mqtt_server() {
                 console.error('Error subscribing:', err);
             }
         });
-        console.log(`Enter a message to send to topic server/send/${deviceId} (e.g., Turn on LED):`);
+
+        // Nếu có truyền biến message vào hàm thì gửi ngay lập tức
+        if (passedMessage) {
+            const publishTopic = `server/send/${device_id}`;
+            let messageToSend;
+            if (typeof passedMessage === 'object') {
+                messageToSend = JSON.stringify(passedMessage);
+            } else {
+                messageToSend = passedMessage;
+                if (messageToSend.trim() === "1") {
+                    messageToSend = JSON.stringify({ command_code: 1 });
+                }
+            }
+            client.publish(publishTopic, messageToSend, {}, (err) => {
+                if (err) {
+                    console.error('Error sending message:', err);
+                } else {
+                    console.log(`Message sent to topic ${publishTopic}: ${messageToSend}`);
+                }
+            });
+        } else {
+            console.log(`Enter a message to send to topic server/send/${device_id} (e.g., Turn on LED):`);
+        }
     });
 
     client.on('message', (topic, message) => {
-        // If the topic starts with "device/send/", extract the device_id
         if (topic.startsWith('device/send/')) {
             const parts = topic.split('/');
             const devId = parts.length >= 3 ? parts[2] : 'unknown';
@@ -49,25 +85,23 @@ export default async function mqtt_server() {
         console.error('Connection error:', err);
     });
 
-    // Create a command-line interface for user input
+    // Tạo giao diện dòng lệnh để nhập message từ người dùng
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
 
-    // Listen for user input and send messages to the topic "server/send/deviceId"
     rl.on('line', (input) => {
-        const publishTopic = `server/send/${deviceId}`;
-        let message = input;
-        // If the input is "1", convert it to JSON with command_code: 1
+        const publishTopic = `server/send/${device_id}`;
+        let inputMessage = input;
         if (input.trim() === "1") {
-            message = JSON.stringify({ command_code: 1 });
+            inputMessage = JSON.stringify({ command_code: 1 });
         }
-        client.publish(publishTopic, message, {}, (err) => {
+        client.publish(publishTopic, inputMessage, {}, (err) => {
             if (err) {
                 console.error('Error sending message:', err);
             } else {
-                console.log(`Message sent to topic ${publishTopic}: ${message}`);
+                console.log(`Message sent to topic ${publishTopic}: ${inputMessage}`);
             }
         });
     });

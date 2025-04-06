@@ -17,6 +17,50 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Hàm dọn dẹp các file .aac cũ, chỉ giữ lại 20 file mới nhất
+function cleanupOldSegments() {
+  fs.readdir(outputDir, (err, files) => {
+    if (err) {
+      console.error("Error reading directory:", err);
+      return;
+    }
+    let segments = files.filter(file => file.endsWith('.aac')).sort((a, b) => {
+      const numA = parseInt(a.match(/\d+/)[0], 10);
+      const numB = parseInt(b.match(/\d+/)[0], 10);
+      return numA - numB;
+    });
+
+    // Lọc các file có kích thước > 4096 byte
+    segments = segments.filter(segment => {
+      const filePath = path.join(outputDir, segment);
+      try {
+        const stats = fs.statSync(filePath);
+        return stats.size > 4096;
+      } catch (err) {
+        console.error(err);
+        return false;
+      }
+    });
+
+    if (segments.length > 20) {
+      const deleteSegments = segments.slice(0, segments.length - 20);
+      deleteSegments.forEach(segment => {
+        const filePath = path.join(outputDir, segment);
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error(`Error deleting file ${filePath}:`, err);
+          } else {
+            console.log(`Deleted old file ${filePath}`);
+          }
+        });
+      });
+    }
+  });
+}
+
+// Chạy cleanupOldSegments mỗi 10 giây
+setInterval(cleanupOldSegments, 10000);
+
 // Tạo server HTTP
 const server = http.createServer(async (req, res) => {
   await delay(getRandomDelay());
@@ -34,26 +78,30 @@ const server = http.createServer(async (req, res) => {
         const numB = parseInt(b.match(/\d+/)[0], 10);
         return numA - numB;
       });
+
       segments = segments.filter(segment => {
         const filePath = path.join(outputDir, segment);
         const stats = fs.statSync(filePath);
         return stats.size > 4096;
       });
+
       if (segments.length < 3) {
         res.writeHead(404);
         res.end('Not enough segments available');
         return;
       }
-      segments = segments.slice(-5);
+
+      // Lấy 5 file .aac mới nhất để tạo playlist
+      const keepSegments = segments.slice(-5);
       const targetDuration = 3;
-      const match = segments[0].match(/(\d+)/);
+      const match = keepSegments[0].match(/(\d+)/);
       const sequence = match ? parseInt(match[1], 10) : 0;
 
       let playlist = '#EXTM3U\n';
       playlist += '#EXT-X-VERSION:3\n';
       playlist += `#EXT-X-TARGETDURATION:${targetDuration}\n`;
       playlist += `#EXT-X-MEDIA-SEQUENCE:${sequence}\n`;
-      segments.forEach(segment => {
+      keepSegments.forEach(segment => {
         playlist += `#EXTINF:3.000,\n${segment}\n`;
       });
 
