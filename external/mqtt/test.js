@@ -1,67 +1,69 @@
 import mqtt from 'mqtt';
 import readline from 'readline';
 
-// Cấu hình MQTT broker
+import { asyncLocalStorage } from '../../requestContext.js';
+
+// MQTT broker configuration
 const brokerUrl = 'mqtt://vip.tecom.pro:1883';
 const deviceId = 'f850119e9ef0';
 
-// Các topic cần subscribe:
-// - "server/send/deviceId": nhận thông báo kết nối từ thiết bị
-// - "device/send/#": nhận phản hồi từ tất cả các thiết bị
+// Topics to subscribe:
+// - "server/send/deviceId": receive connection notifications from the device
+// - "device/send/#": receive responses from all devices
 const subscribeTopics = [`server/send/${deviceId}`, 'device/send/#'];
 
-// Kết nối tới MQTT broker
+// Connect to MQTT broker
 const client = mqtt.connect(brokerUrl);
 
 client.on('connect', () => {
-    console.log('Đã kết nối tới MQTT broker');
-    // Đăng ký nhận tin nhắn từ các topic đã cấu hình
+    console.log('Connected to MQTT broker');
+    // Subscribe to the configured topics
     client.subscribe(subscribeTopics, (err) => {
         if (!err) {
-            console.log(`Đã subscribe vào topics: ${subscribeTopics.join(', ')}`);
+            console.log(`Subscribed to topics: ${subscribeTopics.join(', ')}`);
         } else {
-            console.error('Lỗi khi subscribe:', err);
+            console.error('Error subscribing:', err);
         }
     });
-    console.log(`Nhập tin nhắn để gửi tới topic server/send/${deviceId} (ví dụ: Bật LED):`);
+    console.log(`Enter a message to send to topic server/send/${deviceId} (e.g., Turn on LED):`);
 });
 
 client.on('message', (topic, message) => {
-    // Kiểm tra nếu topic bắt đầu bằng "device/send/" thì tách lấy device_id
+    // Check if the topic starts with "device/send/", then extract the device_id
     if (topic.startsWith('device/send/')) {
         const parts = topic.split('/');
         const devId = parts.length >= 3 ? parts[2] : 'unknown';
-        console.log(`Nhận tin nhắn từ ${topic}: ${message.toString()} (device_id: ${devId})`);
+        console.log(`Received message from ${topic}: ${message.toString()} (device_id: ${devId})`);
     } else {
-        console.log(`Nhận tin nhắn từ ${topic}: ${message.toString()}`);
+        console.log(`Received message from ${topic}: ${message.toString()}`);
     }
 });
 
 client.on('error', (err) => {
-    console.error('Lỗi kết nối:', err);
+    console.error('Connection error:', err);
 });
 
-// Tạo giao diện nhập lệnh từ console
+// Create a command-line interface for user input
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-// Xử lý khi người dùng nhập tin nhắn, gửi tin nhắn qua topic "server/send/deviceId"
+// Handle user input, send message to topic "server/send/deviceId"
 rl.on('line', (input) => {
     const publishTopic = `server/send/${deviceId}`;
-    let message = input; // mặc định gửi nguyên tin nhắn nhập vào
+    let message = input; // default to sending the exact input message
 
-    // Nếu nhập "1", chuyển thành JSON với command_code: 1
+    // If the input is "1", convert to JSON with command_code: 1
     if (input.trim() === "1") {
         message = JSON.stringify({ command_code: 1 });
     }
 
     client.publish(publishTopic, message, {}, (err) => {
         if (err) {
-            console.error('Lỗi khi gửi tin nhắn:', err);
+            console.error('Error sending message:', err);
         } else {
-            console.log(`Đã gửi tin nhắn đến topic ${publishTopic}: ${message}`);
+            console.log(`Message sent to topic ${publishTopic}: ${message}`);
         }
     });
 });
