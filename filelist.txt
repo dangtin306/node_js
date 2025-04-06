@@ -1,2 +1,0 @@
-file '/Users/dangtin306/Downloads/main_server/node_js/live/audio_3.mp3'
-file '/Users/dangtin306/Downloads/main_server/node_js/live/audio_4.mp3'

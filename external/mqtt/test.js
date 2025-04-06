@@ -1,8 +1,6 @@
 import mqtt from 'mqtt';
 import readline from 'readline';
 
-import { asyncLocalStorage } from '../../requestContext.js';
-
 // MQTT broker configuration
 const brokerUrl = 'mqtt://vip.tecom.pro:1883';
 const deviceId = 'f850119e9ef0';
