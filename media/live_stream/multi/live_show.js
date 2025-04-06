@@ -7,6 +7,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const port = 3027;
 
+const liveInfoPath = path.join(__dirname, 'live_info.json');
+const liveInfo = JSON.parse(fs.readFileSync(liveInfoPath, 'utf8'));
+const liveControls = liveInfo.map(info => info.live_control);
+
 // Hàm tạo độ trễ ngẫu nhiên
 function getRandomDelay(min = 100, max = 250) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -57,12 +61,10 @@ function generatePlaylist(outputDir, callback) {
 const server = http.createServer(async (req, res) => {
   await delay(getRandomDelay());
 
-  // Xác định luồng dựa trên URL, ví dụ: /live_1/playlist.m3u8 hoặc /live_2/playlist.m3u8
   const urlParts = req.url.split('/');
-  // urlParts[0] sẽ là chuỗi rỗng vì url bắt đầu bằng '/'
-  const streamName = urlParts[1]; // live_1 hoặc live_2
+  const streamName = urlParts[1];
 
-  if ((req.url === `/${streamName}/playlist.m3u8`) && (streamName === 'live_1' || streamName === 'live_2')) {
+  if (liveControls.includes(streamName) && req.url === `/${streamName}/playlist.m3u8`) {
     await delay(getRandomDelay());
     const outputDir = path.join(__dirname, 'aac_output', streamName);
     generatePlaylist(outputDir, (err, playlist) => {
@@ -74,12 +76,8 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/vnd.apple.mpegurl' });
       res.end(playlist);
     });
-  } 
-  // Xử lý các file .aac theo đường dẫn: /live_1/xxx.aac hoặc /live_2/xxx.aac
-  else if ((streamName === 'live_1' || streamName === 'live_2') && req.url.endsWith('.aac')) {
-    await delay(getRandomDelay());
-    // Loại bỏ tiền tố "/live_1/" hoặc "/live_2/" để lấy tên file
-    const safeUrl = req.url.slice(streamName.length + 2); // +2: dấu '/' sau streamName
+  } else if (liveControls.includes(streamName) && req.url.endsWith('.aac')) {
+    const safeUrl = req.url.slice(streamName.length + 2);
     const outputDir = path.join(__dirname, 'aac_output', streamName);
     const filePath = path.join(outputDir, safeUrl);
     fs.stat(filePath, (err, stats) => {
@@ -94,9 +92,7 @@ const server = http.createServer(async (req, res) => {
       });
       fs.createReadStream(filePath).pipe(res);
     });
-  } 
-  // Các yêu cầu khác trả về lỗi 404
-  else {
+  } else {
     res.writeHead(404);
     res.end('Not Found');
   }
@@ -105,6 +101,7 @@ const server = http.createServer(async (req, res) => {
 // Khởi động server HTTP
 server.listen(port, () => {
   console.log(`Live AAC streams available at:`);
-  console.log(`http://localhost:${port}/live_1/playlist.m3u8`);
-  console.log(`http://localhost:${port}/live_2/playlist.m3u8`);
+  liveControls.forEach(control => {
+    console.log(`http://localhost:${port}/${control}/playlist.m3u8`);
+  });
 });

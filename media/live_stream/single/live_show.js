@@ -49,7 +49,7 @@ async function cleanupOldSegments() {
         const filePath = path.join(outputDir, segment);
         try {
           await fs.promises.unlink(filePath);
-          console.log(`Deleted old file ${filePath}`);
+          // console.log(`Deleted old file ${filePath}`);
         } catch (err) {
           console.error(`Error deleting file ${filePath}:`, err);
         }
