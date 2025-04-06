@@ -78,6 +78,11 @@
         "uri": "mqtt",
         "module": "./external/mqtt/test.js",
         "function": "mqtt_server"
+      },
+      {
+        "uri": "check_live",
+        "module": "./external/check_live.js",
+        "function": "check_live"
       }
     ]
   }
