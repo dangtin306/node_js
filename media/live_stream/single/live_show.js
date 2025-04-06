@@ -65,11 +65,23 @@ setInterval(cleanupOldSegments, 10000);
 const server = http.createServer(async (req, res) => {
   await delay(getRandomDelay());
 
+  // Cho phép tất cả CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Xử lý preflight request
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   if (req.url === '/playlist.m3u8') {
     await delay(getRandomDelay());
     fs.readdir(outputDir, (err, files) => {
       if (err) {
-        res.writeHead(500);
+        res.writeHead(500, { 'Access-Control-Allow-Origin': '*' });
         res.end('Server error');
         return;
       }
@@ -86,7 +98,7 @@ const server = http.createServer(async (req, res) => {
       });
 
       if (segments.length < 3) {
-        res.writeHead(404);
+        res.writeHead(404, { 'Access-Control-Allow-Origin': '*' });
         res.end('Not enough segments available');
         return;
       }
@@ -105,7 +117,10 @@ const server = http.createServer(async (req, res) => {
         playlist += `#EXTINF:3.000,\n${segment}\n`;
       });
 
-      res.writeHead(200, { 'Content-Type': 'application/vnd.apple.mpegurl' });
+      res.writeHead(200, { 
+        'Content-Type': 'application/vnd.apple.mpegurl',
+        'Access-Control-Allow-Origin': '*' 
+      });
       res.end(playlist);
     });
   } else if (req.url.endsWith('.aac')) {
@@ -114,13 +129,14 @@ const server = http.createServer(async (req, res) => {
     const filePath = path.join(outputDir, safeUrl);
     fs.stat(filePath, (err, stats) => {
       if (err) {
-        res.writeHead(404);
+        res.writeHead(404, { 'Access-Control-Allow-Origin': '*' });
         res.end('Not Found');
         return;
       }
       res.writeHead(200, {
         'Content-Type': 'audio/aac',
-        'Content-Length': stats.size
+        'Content-Length': stats.size,
+        'Access-Control-Allow-Origin': '*'
       });
       fs.createReadStream(filePath).pipe(res);
     });
