@@ -30,21 +30,6 @@ time.sleep(2)
 # Đường dẫn thư mục hiện tại
 # current_dir = os.getcwd()
 watch_dir = r"C:\hustmedia6\nodejs\main_server\media\live_stream\multi"
-
-# File chính cần chạy
-main_script = os.path.join(watch_dir, "show_main.js")
-
-print(f"Running node with watch: {watch_dir}")
-print(f"Main script: {main_script}")
-
-# Chạy node trong cửa sổ CMD mới
-
-subprocess.Popen(
-    f'start cmd /k node {main_script}"',
-    shell=True
-)
-
-time.sleep(2)
     
 # File chính cần chạy
 main_script = os.path.join(watch_dir, "live_streams_main.js")
@@ -60,5 +45,19 @@ subprocess.Popen(
 )
 
 time.sleep(2)
-    
+    # File chính cần chạy
+main_script = os.path.join(watch_dir, "show_main.js")
+
+print(f"Running node with watch: {watch_dir}")
+print(f"Main script: {main_script}")
+
+# Chạy node trong cửa sổ CMD mới
+
+subprocess.Popen(
+    f'start cmd /k node {main_script}"',
+    shell=True
+)
+
+time.sleep(2)
+
 sys.exit()
