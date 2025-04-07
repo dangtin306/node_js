@@ -5,14 +5,22 @@ import { fileURLToPath } from 'url';
 import { cleanupOldFiles, generatePlaylist } from './live_show_process.js';
 import get_json_live from './get_json_live.js';
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const port = 3027;
+
+// Lấy dữ liệu liveInfo từ get_json_live
 let liveInfo = await get_json_live();
 liveInfo = liveInfo.api_results.mongo_results;
-// console.log(liveInfo);
-const liveControls = liveInfo.map(info => info.live_control);
+
+// Tạo mapping từ device_id sang live_control
+const deviceIdToLiveControl = {};
+liveInfo.forEach(info => {
+  deviceIdToLiveControl[info.device_id] = info.live_control;
+});
+
+// Lấy danh sách device_id để kiểm tra URL
+const deviceIds = Object.keys(deviceIdToLiveControl);
 
 function getRandomDelay(min = 100, max = 250) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -25,9 +33,28 @@ function delay(ms) {
 const server = http.createServer(async (req, res) => {
   await delay(getRandomDelay());
   const urlParts = req.url.split('/');
-  const streamName = urlParts[1];
 
-  if (liveControls.includes(streamName) && req.url === `/${streamName}/playlist.m3u8`) {
+  // Kiểm tra định dạng URL: /live/{device_id}/...
+  if (urlParts[1] !== 'live' || urlParts.length < 3) {
+    res.writeHead(404);
+    res.end('Not Found');
+    return;
+  }
+
+  const deviceId = urlParts[2]; // Lấy device_id từ URL
+
+  // Kiểm tra xem device_id có hợp lệ không
+  if (!deviceIds.includes(deviceId)) {
+    res.writeHead(404);
+    res.end('Not Found');
+    return;
+  }
+
+  // Ánh xạ device_id về live_control
+  const streamName = deviceIdToLiveControl[deviceId];
+
+  // Xử lý yêu cầu playlist.m3u8
+  if (req.url === `/live/${deviceId}/playlist.m3u8`) {
     await delay(getRandomDelay());
     const outputDir = path.join(__dirname, 'aac_output', streamName);
     generatePlaylist(outputDir, (err, playlist) => {
@@ -39,8 +66,10 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/vnd.apple.mpegurl' });
       res.end(playlist);
     });
-  } else if (liveControls.includes(streamName) && req.url.endsWith('.aac')) {
-    const safeUrl = req.url.slice(streamName.length + 2);
+  }
+  // Xử lý yêu cầu file .aac
+  else if (req.url.startsWith(`/live/${deviceId}/`) && req.url.endsWith('.aac')) {
+    const safeUrl = req.url.slice(`/live/${deviceId}/`.length);
     const outputDir = path.join(__dirname, 'aac_output', streamName);
     const filePath = path.join(outputDir, safeUrl);
     fs.stat(filePath, (err, stats) => {
@@ -63,15 +92,15 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(port, () => {
   console.log(`Live AAC streams available at:`);
-  liveControls.forEach(control => {
-    console.log(`http://localhost:${port}/${control}/playlist.m3u8`);
+  deviceIds.forEach(deviceId => {
+    console.log(`http://localhost:${port}/live/${deviceId}/playlist.m3u8`);
   });
 
   // Chạy cleanup định kỳ cho từng stream
-  liveControls.forEach(control => {
-    const outputDir = path.join(__dirname, 'aac_output', control);
+  liveInfo.forEach(info => {
+    const outputDir = path.join(__dirname, 'aac_output', info.live_control);
     setInterval(() => {
       cleanupOldFiles(outputDir);
-    }, 10000); // cleanup mỗi 10 giây
+    }, 10000); // Cleanup mỗi 10 giây
   });
 });

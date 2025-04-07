@@ -38,7 +38,6 @@ export default async function files() {
                 return result;
                 // return info;
             } else {
-
                 return "ko có file";
             }
         }

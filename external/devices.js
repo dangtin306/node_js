@@ -90,7 +90,8 @@ export default async function devices() {
                 id: device.id,
                 live_control: `live_${device.id}`,
                 socket_control: `socket_live_${device.id}`,
-                device_id: device.id
+                id_devices : device.id,
+                device_id: device.device_id
             }));
         }
 
