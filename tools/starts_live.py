@@ -18,6 +18,7 @@ for process_info in node_processes:
             cmd_pid = info_parts[-1]  # PID của cmd
             print(f"Đóng cửa sổ cmd có PID: {cmd_pid}")
             subprocess.Popen(['taskkill', '/F', '/PID', cmd_pid], shell=True).wait()
+            time.sleep(3)
 
 
 # Sử dụng PowerShell để đóng tất cả các cửa sổ cmd
@@ -26,7 +27,7 @@ for process_info in node_processes:
 # powershell_command = "Get-Process | Where-Object {$_.ProcessName -eq 'cmd'} | ForEach-Object {Stop-Process -Id $_.Id -Force}"
 # subprocess.Popen(["powershell.exe", "-Command", powershell_command], shell=True).wait()
 # Đường dẫn thư mục hiện tại
-time.sleep(4)
+time.sleep(3)
 # Đường dẫn thư mục hiện tại
 # current_dir = os.getcwd()
 watch_dir = r"C:\hustmedia6\nodejs\main_server\media\live_stream\multi"
