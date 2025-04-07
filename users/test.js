@@ -4,7 +4,8 @@ import {
     mongo_detect_single,
     mongo_insert_query,
     mongo_delete_query,
-    mongo_update_single
+    mongo_update_single,
+    mongo_update_multi
 } from '../mongo_1/config/main_process.js';
 
 

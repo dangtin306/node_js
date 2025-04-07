@@ -2,7 +2,7 @@ import { connectDB } from './connect.js';
 const db = await connectDB();
 
 
-export async function mongo_update_multi() {
+export async function mongo_update_multi(query, set) {
   try {
     await client.connect();
     const collection = db.collection("collection_1");

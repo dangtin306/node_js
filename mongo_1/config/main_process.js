@@ -14,3 +14,4 @@ export { mongo_delete_query } from './delete_process.js';
 
 
 export { mongo_update_single } from './update_single.js';
+export { mongo_update_multi } from './update_multi.js';
