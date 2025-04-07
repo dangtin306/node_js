@@ -5,7 +5,8 @@ import {
     mongo_detect_single,      // Function to detect a single document.
     mongo_insert_query,       // Function to insert a document.
     mongo_delete_query,       // Function to delete a document.
-    mongo_update_single       // Function to update a single document.
+    mongo_update_single,     // Function to update a single document.
+    mongo_update_multi
 } from '../mongo_1/config/main_process.js';
 
 // Import asyncLocalStorage to manage request-specific context.
