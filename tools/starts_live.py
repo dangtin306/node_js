@@ -39,7 +39,7 @@ for process_info in node_processes:
                 print(f"Lỗi khi xử lý tiến trình: {e}")
             time.sleep(3)
 
-time.sleep(3)
+time.sleep(2)
 watch_dir = r"C:\hustmedia6\nodejs\main_server\media\live_stream\multi"
 
 # File chính cần chạy cho live_streams_main.js

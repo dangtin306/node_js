@@ -197,7 +197,7 @@ export async function mongo_find_query(query, field) {
       return { mongo_status: "cancel", mongo_results: "Không tìm thấy document phù hợp." };
     }
 
-    // Xác định key của query, giả sử query có dạng: { "users.block_list.id_users": "2344" }
+    // Xác định key của query
     const queryKeys = Object.keys(query);
     if (queryKeys.length === 0) {
       console.log("Query rỗng.");
@@ -215,20 +215,28 @@ export async function mongo_find_query(query, field) {
     const filterField = queryKey.substring(lastDotIndex + 1);
     const filterValue = query[queryKey];
 
-    // Hàm tiện ích để truy xuất giá trị theo đường dẫn (path) từ một object
+    // Hàm tiện ích để truy xuất giá trị theo đường dẫn từ một object
     function getNested(obj, path) {
       return path.split('.').reduce((acc, key) => acc && acc[key], obj);
     }
 
-    // Lấy mảng chứa dữ liệu từ document dựa trên basePath (ví dụ: "users.block_list")
+    // Lấy mảng dữ liệu từ document dựa trên basePath
     const nestedData = getNested(result, basePath);
     if (!nestedData || !Array.isArray(nestedData)) {
       console.log(`Không tìm thấy mảng dữ liệu tại đường dẫn: ${basePath}`);
       return { mongo_status: "cancel", mongo_results: `Không tìm thấy mảng dữ liệu tại đường dẫn: ${basePath}` };
     }
 
-    // Tìm phần tử trong mảng có filterField === filterValue
-    const element = nestedData.find(item => item[filterField] == filterValue);
+    // Tìm phần tử trong mảng có filterField === filterValue.
+    // Nếu item[filterField] là mảng, kiểm tra xem có chứa filterValue không.
+    const element = nestedData.find(item => {
+      const value = item[filterField];
+      if (Array.isArray(value)) {
+        return value.includes(filterValue);
+      }
+      return value == filterValue;
+    });
+
     if (!element) {
       console.log("Không tìm thấy phần tử phù hợp trong mảng.");
       return { mongo_status: "cancel", mongo_results: "Không tìm thấy phần tử phù hợp trong mảng." };
