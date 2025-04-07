@@ -2,7 +2,7 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { cleanupOldFiles, generatePlaylist } from './live_show_process.js';
+import { cleanupOldFiles, generatePlaylist } from './show_process.js';
 import get_json_live from './get_json_live.js';
 
 const __filename = fileURLToPath(import.meta.url);
