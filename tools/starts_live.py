@@ -40,7 +40,7 @@ print(f"Main script: {main_script}")
 # Chạy node trong cửa sổ CMD mới
 
 subprocess.Popen(
-    f'start cmd /k node --watch "{watch_dir}" "{main_script}"',
+    f'start cmd /k node {main_script}"',
     shell=True
 )
 
@@ -55,7 +55,7 @@ print(f"Main script: {main_script}")
 # Chạy node trong cửa sổ CMD mới
 
 subprocess.Popen(
-    f'start cmd /k node --watch "{watch_dir}" "{main_script}"',
+    f'start cmd /k node {main_script}',
     shell=True
 )
 
