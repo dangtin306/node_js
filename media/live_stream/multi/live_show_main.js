@@ -2,6 +2,7 @@ import http from 'http';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { cleanupOldFiles, generatePlaylist } from './live_show_process.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,7 +12,6 @@ const liveInfoPath = path.join(__dirname, 'live_info.json');
 const liveInfo = JSON.parse(fs.readFileSync(liveInfoPath, 'utf8'));
 const liveControls = liveInfo.map(info => info.live_control);
 
-// Hàm tạo độ trễ ngẫu nhiên
 function getRandomDelay(min = 100, max = 250) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
@@ -20,47 +20,8 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// Hàm xử lý tạo playlist dựa trên thư mục output được truyền vào
-function generatePlaylist(outputDir, callback) {
-  fs.readdir(outputDir, (err, files) => {
-    if (err) {
-      callback(err);
-      return;
-    }
-    let segments = files.filter(file => file.endsWith('.aac')).sort((a, b) => {
-      const numA = parseInt(a.match(/\d+/)[0], 10);
-      const numB = parseInt(b.match(/\d+/)[0], 10);
-      return numA - numB;
-    });
-    segments = segments.filter(segment => {
-      const filePath = path.join(outputDir, segment);
-      const stats = fs.statSync(filePath);
-      return stats.size > 4096;
-    });
-    if (segments.length < 3) {
-      callback(new Error('Not enough segments available'));
-      return;
-    }
-    segments = segments.slice(-5);
-    const targetDuration = 3;
-    const match = segments[0].match(/(\d+)/);
-    const sequence = match ? parseInt(match[1], 10) : 0;
-
-    let playlist = '#EXTM3U\n';
-    playlist += '#EXT-X-VERSION:3\n';
-    playlist += `#EXT-X-TARGETDURATION:${targetDuration}\n`;
-    playlist += `#EXT-X-MEDIA-SEQUENCE:${sequence}\n`;
-    segments.forEach(segment => {
-      playlist += `#EXTINF:3.000,\n${segment}\n`;
-    });
-    callback(null, playlist);
-  });
-}
-
-// Tạo server HTTP
 const server = http.createServer(async (req, res) => {
   await delay(getRandomDelay());
-
   const urlParts = req.url.split('/');
   const streamName = urlParts[1];
 
@@ -98,10 +59,17 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-// Khởi động server HTTP
 server.listen(port, () => {
   console.log(`Live AAC streams available at:`);
   liveControls.forEach(control => {
     console.log(`http://localhost:${port}/${control}/playlist.m3u8`);
+  });
+
+  // Chạy cleanup định kỳ cho từng stream
+  liveControls.forEach(control => {
+    const outputDir = path.join(__dirname, 'aac_output', control);
+    setInterval(() => {
+      cleanupOldFiles(outputDir);
+    }, 10000); // cleanup mỗi 10 giây
   });
 });

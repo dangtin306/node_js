@@ -25,12 +25,12 @@ export async function mongo_update_single(query, set) {
       };
     }
   } catch (error) {
-    console.error("Lỗi khi update:", error);
+    console.error("Error when update:", error);
     return {
       mongo_status: "cancel",
       mongo_results: error.message,
     };
   } finally {
-    console.error("Đã xử lý hàm update:");
+    console.error("update: done");
   }
 }
