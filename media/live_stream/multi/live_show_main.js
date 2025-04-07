@@ -3,13 +3,15 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { cleanupOldFiles, generatePlaylist } from './live_show_process.js';
+import get_json_live from './get_json_live.js';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const port = 3027;
-
-const liveInfoPath = path.join(__dirname, 'live_info.json');
-const liveInfo = JSON.parse(fs.readFileSync(liveInfoPath, 'utf8'));
+let liveInfo = await get_json_live();
+liveInfo = liveInfo.api_results.mongo_results;
+// console.log(liveInfo);
 const liveControls = liveInfo.map(info => info.live_control);
 
 function getRandomDelay(min = 100, max = 250) {

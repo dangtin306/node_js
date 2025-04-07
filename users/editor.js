@@ -19,7 +19,7 @@ export default async function editor() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
 
     // Check if the URL is meant for updating the device_title
-    if (url_full.includes('/edit')) {
+    if (url_full.includes('/edit_1')) {
         // Extract necessary fields from the posted data
         const { device_id, device_title } = data_post_api;
 
@@ -30,12 +30,44 @@ export default async function editor() {
         // MongoDB query to update only the device_title field
         const updateResult = await mongo_update_single(
             // Query to find the correct device
-            { "external_connect.devices.lists.device_id": device_id }, 
+            { "external_connect.devices.lists.device_id": device_id },
             {
                 $set: {
                     "external_connect.devices.lists.$.device_title": device_title
                 }
             }
+        );
+
+        return updateResult;
+    } else if (url_full.includes('/edit_2')) {
+        // Destructure necessary fields
+        const {
+            device_id,
+            device_title,
+            device_type,
+            device_model,
+            status_device,
+            status_connect,
+            ver
+        } = data_post_api;
+
+        if (!device_id) {
+            return { error: "device_id is required" };
+        }
+
+        // Construct the update fields dynamically
+        const updateFields = {};
+        if (device_title !== undefined) updateFields["external_connect.devices.lists.$.device_title"] = device_title;
+        if (device_type !== undefined) updateFields["external_connect.devices.lists.$.device_type"] = device_type;
+        if (device_model !== undefined) updateFields["external_connect.devices.lists.$.device_model"] = device_model;
+        if (status_device !== undefined) updateFields["external_connect.devices.lists.$.status_device"] = status_device;
+        if (status_connect !== undefined) updateFields["external_connect.devices.lists.$.status_connect"] = status_connect;
+        if (ver !== undefined) updateFields["external_connect.devices.lists.$.ver"] = ver;
+
+        // MongoDB query to update multiple fields
+        const updateResult = await mongo_update_multi(
+            { "external_connect.devices.lists.device_id": device_id },
+            { $set: updateFields }
         );
 
         return updateResult;

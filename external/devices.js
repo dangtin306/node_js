@@ -6,7 +6,8 @@ import {
     mongo_json_count,
     mongo_insert_query,
     mongo_delete_query,
-    mongo_update_single
+    mongo_update_single,
+    mongo_update_multi
 } from '../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
 import mqtt_server from './mqtt/home.js';
@@ -83,12 +84,32 @@ export default async function devices() {
             return "ko có id_users";
         }
     } else if (url_full.includes('/device_full')) {
-        const query = { "external_connect.devices.lists": { $exists: true } };
-        const field = {
-            path: "external_connect.devices.lists"
-        };
-        const result = await mongo_get_multi(query, field);
-        return result;
+        // Hàm biến đổi dữ liệu
+        function transformDevices(devices) {
+            return devices.map(device => ({
+                id: device.id,
+                live_control: `live_${device.id}`,
+                socket_control: `socket_live_${device.id}`,
+                device_id: device.id
+            }));
+        }
+
+        // Sử dụng hàm với kết quả từ mongo_get
+        const result = await mongo_get("external_connect.devices.lists");
+        if (result.mongo_status === "success") {
+            const transformedResults = transformDevices(result.mongo_results);
+            const updateFields = {};
+            updateFields["media.audio.streams"] = transformedResults;
+            console.log(updateFields);
+            // MongoDB query to update multiple fields
+            const updateResult = await mongo_update_multi(
+                { "media.audio.streams": { $type: "array" } },
+                { $set: updateFields }
+            );
+            return (updateResult);
+        } else {
+            return ("Lỗi:", result.mongo_results);
+        }
     } else if (url_full.includes('/device_edit')) {
         return data_post_api;
     } else if (url_full.includes('/volume_control')) {

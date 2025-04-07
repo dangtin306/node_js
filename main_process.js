@@ -12,7 +12,7 @@ const textImageSearch = () => {
     return { message: "Kết quả tìm kiếm hình ảnh dựa trên văn bản" };
 };
 mqtt_server();
-console.log(12231231123);
+console.log("connect mqtt_server");
 export default async function main_process(req, res) {
 
     const send_api_success = (data) => {

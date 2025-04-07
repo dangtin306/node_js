@@ -4,15 +4,14 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import get_json_live from './get_json_live.js';
 
 // Thiết lập đường dẫn file và thư mục
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const outputDir = path.join(__dirname, 'aac_output');
-const liveInfoPath = path.join(__dirname, 'live_info.json');
-
-// Đọc thông tin từ live_info.json
-const liveInfo = JSON.parse(fs.readFileSync(liveInfoPath, 'utf-8'));
+let liveInfo = await get_json_live();
+liveInfo = liveInfo.api_results.mongo_results;
 
 // Khởi tạo thư mục đầu ra và biến trạng thái
 const liveDirs = {};
