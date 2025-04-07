@@ -26,7 +26,7 @@ for process_info in node_processes:
 # powershell_command = "Get-Process | Where-Object {$_.ProcessName -eq 'cmd'} | ForEach-Object {Stop-Process -Id $_.Id -Force}"
 # subprocess.Popen(["powershell.exe", "-Command", powershell_command], shell=True).wait()
 # Đường dẫn thư mục hiện tại
-time.sleep(2)
+time.sleep(4)
 # Đường dẫn thư mục hiện tại
 # current_dir = os.getcwd()
 watch_dir = r"C:\hustmedia6\nodejs\main_server\media\live_stream\multi"
