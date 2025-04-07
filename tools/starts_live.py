@@ -3,7 +3,7 @@ import subprocess
 import time
 import psutil
 import pyautogui
-
+import sys
 time.sleep(1)
 # Lệnh wmic để lấy thông tin các tiến trình
 wmic_command = 'wmic process get processid,commandline'
@@ -34,45 +34,31 @@ watch_dir = r"C:\hustmedia6\nodejs\main_server\media\live_stream\multi"
 # File chính cần chạy
 main_script = os.path.join(watch_dir, "show_main.js")
 
-print(f"Running nodemon with watch: {watch_dir}")
+print(f"Running node with watch: {watch_dir}")
 print(f"Main script: {main_script}")
 
-# Chạy nodemon trong cửa sổ CMD mới
+# Chạy node trong cửa sổ CMD mới
 
 subprocess.Popen(
-    f'start cmd /k nodemon --watch "{watch_dir}" "{main_script}"',
+    f'start cmd /k node --watch "{watch_dir}" "{main_script}"',
     shell=True
 )
 
-time.sleep(1.5)
+time.sleep(2)
     
 # File chính cần chạy
 main_script = os.path.join(watch_dir, "live_streams_main.js")
 
-print(f"Running nodemon with watch: {watch_dir}")
+print(f"Running node with watch: {watch_dir}")
 print(f"Main script: {main_script}")
 
-# Chạy nodemon trong cửa sổ CMD mới
+# Chạy node trong cửa sổ CMD mới
 
 subprocess.Popen(
-    f'start cmd /k nodemon --watch "{watch_dir}" "{main_script}"',
+    f'start cmd /k node --watch "{watch_dir}" "{main_script}"',
     shell=True
 )
 
-time.sleep(1.5)
+time.sleep(2)
     
-# File chính cần chạy
-main_script = os.path.join(watch_dir, "main_home.js")
-
-print(f"Running nodemon with watch: {watch_dir}")
-print(f"Main script: {main_script}")
-
-# Chạy nodemon trong cửa sổ CMD mới
-
-subprocess.Popen(
-    f'start cmd /k nodemon --watch "{watch_dir}" "{main_script}"',
-    shell=True
-)
-
-time.sleep(1.5)
-    
+sys.exit()
