@@ -11,7 +11,7 @@ node_processes = subprocess.Popen(wmic_command, stdout=subprocess.PIPE, shell=Tr
 
 # Tìm và xử lý các tiến trình có chứa 'images_text' hoặc 'texttovoice_ok' trong commandline
 for process_info in node_processes:
-    if 'show_main' in process_info  or 'live_streams_main' in process_info:
+    if 'show_live_main' in process_info  or 'live_streams_main' in process_info:
         # print(process_info)
         info_parts = process_info.split()
         if len(info_parts) >= 2:
@@ -47,7 +47,7 @@ subprocess.Popen(
 
 time.sleep(2)
     # File chính cần chạy
-main_script = os.path.join(watch_dir, "show_main.js")
+main_script = os.path.join(watch_dir, "show_live_main.js")
 
 print(f"Running node with watch: {watch_dir}")
 print(f"Main script: {main_script}")
