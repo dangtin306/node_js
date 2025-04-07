@@ -9,7 +9,7 @@ import {
     mongo_update_single
 } from '../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
-import mqtt_server from '../../main_server/external/mqtt/home.js';
+import mqtt_server from './mqtt/home.js';
 
 export default async function devices() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
@@ -82,6 +82,13 @@ export default async function devices() {
         else {
             return "ko có id_users";
         }
+    } else if (url_full.includes('/device_full')) {
+        const query = { "external_connect.devices.lists": { $exists: true } };
+        const field = {
+            path: "external_connect.devices.lists"
+        };
+        const result = await mongo_get_multi(query, field);
+        return result;
     } else if (url_full.includes('/device_edit')) {
         return data_post_api;
     } else if (url_full.includes('/volume_control')) {
