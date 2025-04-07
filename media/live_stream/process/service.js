@@ -20,35 +20,10 @@ export default async function service() {
         let info = await mongo_find_query({ "external_connect.devices.lists.device_id": device_id }, "id");
         const id_device = info.mongo_results;
         
-        info = await mongo_find_query({ "media.audio.streams.id_devices": id_device }, "live_uri");
-        return info;
-        // Hàm biến đổi dữ liệu
-        // function transformDevices(devices) {
-        //     return devices.map(device => ({
-        //         id: device.id,
-        //         live_control: `live_${device.id}`,
-        //         socket_control: `socket_live_${device.id}`,
-        //         id_devices: device.id,
-        //         device_id: device.device_id
-        //     }));
-        // }
-
-        // // Sử dụng hàm với kết quả từ mongo_get
-        // const result = await mongo_get("external_connect.devices.lists");
-        // if (result.mongo_status === "success") {
-        //     const transformedResults = transformDevices(result.mongo_results);
-        //     const updateFields = {};
-        //     updateFields["media.audio.streams"] = transformedResults;
-        //     console.log(updateFields);
-        //     // MongoDB query to update multiple fields
-        //     const updateResult = await mongo_update_multi(
-        //         { "media.audio.streams": { $type: "array" } },
-        //         { $set: updateFields }
-        //     );
-        //     return (updateResult);
-        // } else {
-        //     return ("Lỗi:", result.mongo_results);
-        // }
+        let live_uri = await mongo_find_query({ "media.audio.streams.id_devices": id_device }, "live_uri");
+        live_uri = live_uri.mongo_results;
+        live_uri = `http://vip.tecom.pro:3027/live/${live_uri}/playlist.m3u8`;
+        return live_uri;
     }
     else {
         return "ko tìm thấy";
