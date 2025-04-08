@@ -37,9 +37,9 @@ for process_info in node_processes:
                 kill_process_tree(cmd_pid)
             except Exception as e:
                 print(f"Lỗi khi xử lý tiến trình: {e}")
-            time.sleep(3)
+            time.sleep(2)
 
-time.sleep(2)
+time.sleep(1)
 watch_dir = r"C:\hustmedia6\nodejs\main_server\media\live_stream\multi"
 
 # File chính cần chạy cho streams_main.js
