@@ -69,11 +69,6 @@ function updateGlobalSegmentNumber(dir, currentNumber) {
 
 // Hàm khởi động FFmpeg cho một luồng
 async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber) {
-  // if (ffmpegProcess && !ffmpegProcess.killed) {
-  //   console.log(`Đang dừng ffmpegProcess trước đó (PID: ${ffmpegProcess.pid})`);
-  //   ffmpegProcess.kill('SIGTERM');
-  //   await new Promise(resolve => ffmpegProcess.once('close', resolve));
-  // }
   if (ffmpegProcess && typeof ffmpegProcess.pid === 'number' && !ffmpegProcess.killed) {
     console.log(`Đang dừng ffmpegProcess trước đó (PID: ${ffmpegProcess.pid})`);
     if (process.platform === 'win32') {
@@ -95,6 +90,8 @@ async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber
         }
       });
     }
+    // Chờ cho đến khi tiến trình FFmpeg thực sự kết thúc
+    await new Promise(resolve => ffmpegProcess.once('close', resolve));
   } else {
     console.log('Không có ffmpegProcess cũ để dừng hoặc ffmpegProcess không hợp lệ.');
   }
