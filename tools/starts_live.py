@@ -26,9 +26,9 @@ time.sleep(1)
 wmic_command = 'wmic process get processid,commandline'
 node_processes = subprocess.Popen(wmic_command, stdout=subprocess.PIPE, shell=True).communicate()[0].decode().split('\n')
 
-# Tìm và xử lý các tiến trình có chứa 'show_live_main' hoặc 'live_streams_main' trong commandline
+# Tìm và xử lý các tiến trình có chứa 'show_live_main' hoặc 'streams_main' trong commandline
 for process_info in node_processes:
-    if 'show_live_main' in process_info or 'live_streams_main' in process_info:
+    if 'show_live_main' in process_info or 'streams_main' in process_info:
         info_parts = process_info.split()
         if len(info_parts) >= 2:
             try:
@@ -42,8 +42,8 @@ for process_info in node_processes:
 time.sleep(2)
 watch_dir = r"C:\hustmedia6\nodejs\main_server\media\live_stream\multi"
 
-# File chính cần chạy cho live_streams_main.js
-main_script = os.path.join(watch_dir, "live_streams_main.js")
+# File chính cần chạy cho streams_main.js
+main_script = os.path.join(watch_dir, "streams_main.js")
 print(f"Running node with watch: {watch_dir}")
 print(f"Main script: {main_script}")
 subprocess.Popen(

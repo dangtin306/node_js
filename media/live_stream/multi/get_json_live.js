@@ -8,7 +8,7 @@ export default async function get_json_live() {
             'Content-Type': 'application/json'
         },
         data: {
-            query: 'media.audio.lives_url'
+            query: 'media.audio.streams'
         },
         maxBodyLength: Infinity
     };

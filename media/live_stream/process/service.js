@@ -10,6 +10,7 @@ import {
     mongo_update_multi
 } from '../../../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../../../requestContext.js';
+import { io } from "socket.io-client";
 
 export default async function service() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
@@ -19,11 +20,20 @@ export default async function service() {
         const device_id = url_param.device_id;
         let info = await mongo_find_query({ "external_connect.devices.lists.device_id": device_id }, "id");
         const id_device = info.mongo_results;
-        
-        let live_uri = await mongo_find_query({ "media.audio.lives_url.id_devices": id_device }, "live_uri");
+
+        let live_uri = await mongo_find_query({ "media.audio.streams.id_devices": id_device }, "live_uri");
         live_uri = live_uri.mongo_results;
         live_uri = `http://vip.tecom.pro:3027/live/${live_uri}/playlist.m3u8`;
         return live_uri;
+    } else if (url_full.includes('/get_link_live')) {
+        const device_id = data_post_api.device_id;
+        // let info = await mongo_find_query({ "external_connect.devices.lists.device_id": device_id }, "id");
+        // const id_device = info.mongo_results;
+
+        // let live_uri = await mongo_find_query({ "media.audio.streams.id_devices": id_device }, "live_uri");
+        // live_uri = live_uri.mongo_results;
+        // live_uri = `http://vip.tecom.pro:3027/live/${live_uri}/playlist.m3u8`;
+        // return live_uri;
     }
     else {
         return "ko tìm thấy";
