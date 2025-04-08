@@ -28,7 +28,7 @@ node_processes = subprocess.Popen(wmic_command, stdout=subprocess.PIPE, shell=Tr
 
 # Tìm và xử lý các tiến trình có chứa 'show_live_main' hoặc 'streams_main' trong commandline
 for process_info in node_processes:
-    if 'show_live_main' in process_info or 'streams_main' in process_info:
+    if 'ffmpeg' in process_info or 'show_live_main' in process_info or 'streams_main' in process_info:
         info_parts = process_info.split()
         if len(info_parts) >= 2:
             try:
