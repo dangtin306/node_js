@@ -1,10 +1,10 @@
-import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import get_json_live from './get_json_live.js';
+import { spawn, exec } from 'child_process';
 
 // Thiết lập đường dẫn file và thư mục
 const __filename = fileURLToPath(import.meta.url);
@@ -74,13 +74,29 @@ async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber
   //   ffmpegProcess.kill('SIGTERM');
   //   await new Promise(resolve => ffmpegProcess.once('close', resolve));
   // }
-  if (ffmpegProcess && !ffmpegProcess.killed) {
+  if (ffmpegProcess && typeof ffmpegProcess.pid === 'number' && !ffmpegProcess.killed) {
     console.log(`Đang dừng ffmpegProcess trước đó (PID: ${ffmpegProcess.pid})`);
-    exec(`taskkill /F /PID ${ffmpegProcess.pid} /T`, (err, stdout, stderr) => {
-      if (err) console.error(`Lỗi khi kill: ${err}`);
-      else console.log(`FFmpeg đã được kill: ${stdout}`);
-    });
-    await new Promise(resolve => ffmpegProcess.once('close', resolve));
+    if (process.platform === 'win32') {
+      // Trên Windows, sử dụng taskkill
+      exec(`taskkill /F /PID ${ffmpegProcess.pid} /T`, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`Lỗi khi kill trên Windows: ${err}`);
+        } else {
+          console.log(`FFmpeg đã được kill trên Windows: ${stdout}`);
+        }
+      });
+    } else {
+      // Trên macOS và Linux, sử dụng kill
+      exec(`kill -TERM ${ffmpegProcess.pid}`, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`Lỗi khi kill trên macOS/Linux: ${err}`);
+        } else {
+          console.log(`FFmpeg đã được kill trên macOS/Linux: ${stdout}`);
+        }
+      });
+    }
+  } else {
+    console.log('Không có ffmpegProcess cũ để dừng hoặc ffmpegProcess không hợp lệ.');
   }
   let startNumber = updateGlobalSegmentNumber(liveDir, globalSegmentNumber);
   console.log(`Khởi động FFmpeg với đầu vào: ${inputUrl} (bắt đầu từ số ${startNumber})`);
