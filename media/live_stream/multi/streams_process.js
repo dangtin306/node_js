@@ -69,10 +69,32 @@ function updateGlobalSegmentNumber(dir, currentNumber) {
 
 // Hàm khởi động FFmpeg cho một luồng
 async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber) {
-  // Dừng tiến trình FFmpeg cũ nếu có
-  await stopFFmpegProcess(ffmpegProcess);
-
-  // Cập nhật số đoạn và khởi động FFmpeg mới
+  if (ffmpegProcess && typeof ffmpegProcess.pid === 'number' && !ffmpegProcess.killed) {
+    console.log(`Đang dừng ffmpegProcess trước đó (PID: ${ffmpegProcess.pid})`);
+    if (process.platform === 'win32') {
+      // Trên Windows, sử dụng taskkill
+      exec(`taskkill /F /PID ${ffmpegProcess.pid} /T`, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`Lỗi khi kill trên Windows: ${err}`);
+        } else {
+          console.log(`FFmpeg đã được kill trên Windows: ${stdout}`);
+        }
+      });
+    } else {
+      // Trên macOS và Linux, sử dụng kill
+      exec(`kill -TERM ${ffmpegProcess.pid}`, (err, stdout, stderr) => {
+        if (err) {
+          console.error(`Lỗi khi kill trên macOS/Linux: ${err}`);
+        } else {
+          console.log(`FFmpeg đã được kill trên macOS/Linux: ${stdout}`);
+        }
+      });
+    }
+    // Chờ cho đến khi tiến trình FFmpeg thực sự kết thúc
+    await new Promise(resolve => ffmpegProcess.once('close', resolve));
+  } else {
+    console.log('Không có ffmpegProcess cũ để dừng hoặc ffmpegProcess không hợp lệ.');
+  }
   let startNumber = updateGlobalSegmentNumber(liveDir, globalSegmentNumber);
   console.log(`Khởi động FFmpeg với đầu vào: ${inputUrl} (bắt đầu từ số ${startNumber})`);
 
