@@ -12,6 +12,54 @@ import {
 import { asyncLocalStorage } from '../../../requestContext.js';
 import { io } from "socket.io-client";
 
+async function handleSocketLive(id_streams_relay, socket_control) {
+    return new Promise((resolve, reject) => {
+        const socket = io("http://localhost:3028");
+        const timeout = 5000; // Timeout sau 5 giây
+
+        // Thiết lập timeout để tự động reject nếu không nhận phản hồi
+        const timer = setTimeout(() => {
+            console.error("Timeout: Không nhận được phản hồi từ server");
+            socket.disconnect();
+            reject(new Error("Timeout: Không nhận được phản hồi từ server"));
+        }, timeout);
+
+        // Khi kết nối thành công
+        socket.on("connect", () => {
+            console.log("Đã kết nối Socket.IO");
+
+            // Gửi sự kiện tới server
+            socket.emit(socket_control, { linklive: id_streams_relay }, (response) => {
+                clearTimeout(timer); // Hủy timeout khi nhận được phản hồi
+                if (response) {
+                    console.log(`Server xác nhận nhận sự kiện ${socket_control}:`, response);
+                    resolve(response);
+                } else {
+                    console.log(`Đã gửi sự kiện ${socket_control} với dữ liệu: { linklive: ${id_streams_relay} }`);
+                    resolve("Đã gửi sự kiện nhưng không nhận được phản hồi từ server");
+                }
+            });
+
+            // Ngắt kết nối sau 3 giây
+            setTimeout(() => {
+                socket.disconnect();
+                console.log("Đã ngắt kết nối");
+            }, 3000);
+        });
+
+        // Xử lý lỗi kết nối
+        socket.on("connect_error", (error) => {
+            clearTimeout(timer);
+            console.error("Lỗi kết nối Socket.IO:", error);
+            reject(error);
+        });
+
+        // Xác nhận ngắt kết nối từ server
+        socket.on("disconnect", () => {
+            console.log("Đã ngắt kết nối từ server");
+        });
+    });
+}
 export default async function service() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
     const url_full = asyncLocalStorage.getStore().get('url_full');
@@ -31,37 +79,16 @@ export default async function service() {
         const id_streams_relay = data_post_api.id_streams_relay;
         const socket_control = data_post_api.socket_control;
         // Kết nối đến server socket (ví dụ: localhost:3028)
-        const socket = io("http://localhost:3028");
-
-        socket.on("connect", () => {
-            console.log("Đã kết nối Socket.IO");
-
-            // Gửi sự kiện với tên socket_control và dữ liệu chứa id_streams_relay
-            socket.emit(socket_control, { linklive: id_streams_relay }, (response) => {
-                // Callback để xác nhận server đã nhận sự kiện
-                if (response) {
-                    console.log(`Server xác nhận nhận sự kiện ${socket_control}:`, response);
-                } else {
-                    console.log(`Đã gửi sự kiện ${socket_control} với dữ liệu: { linklive: ${id_streams_relay} }`);
-                }
-            });
-
-            // Sau khi gửi sự kiện, đợi 3 giây rồi ngắt kết nối và kết thúc tiến trình
-            setTimeout(() => {
-                socket.disconnect();
-                console.log("Đã ngắt kết nối và kết thúc tiến trình");
-            }, 3000);
-        });
-
-        socket.on("connect_error", (error) => {
-            console.error("Lỗi kết nối Socket.IO:", error);
-            process.exit(1);
-        });
-
-        socket.on("disconnect", () => {
-            return("Đã ngắt kết nối từ server");
-        });
+        try {
+            const result = await handleSocketLive(id_streams_relay, socket_control);
+            console.log("Kết quả từ hàm handleSocketLive:", result);
+            return result;
+        } catch (error) {
+            console.error("Lỗi khi xử lý Socket.IO:", error);
+            return "Lỗi khi xử lý Socket.IO";
+        }
     } else {
         return "ko tìm thấy";
     }
 }
+

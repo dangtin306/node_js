@@ -141,14 +141,18 @@ io.on('connection', (socket) => {
   console.log('Đã kết nối Socket.IO');
 
   liveInfo.forEach(info => {
-    socket.on(info.socket_control, (jsonData) => handleStreamUpdate(info.live_control, jsonData));
+    socket.on(info.socket_control, (jsonData, callback) => {
+      // Gọi hàm xử lý sự kiện
+      handleStreamUpdate(info.live_control, jsonData);
+      // Gửi phản hồi về client
+      callback({ socket_status: 'success' });
+    });
   });
 
   socket.on('disconnect', () => {
     console.log('Đã ngắt kết nối Socket.IO');
   });
 });
-
 // Khởi động server Socket.IO
 httpServer.listen(3028, () => {
   console.log('Socket.IO server đang chạy trên cổng 3028');
