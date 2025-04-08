@@ -28,7 +28,7 @@ export default async function service() {
         live_uri = `http://vip.tecom.pro:3027/live/${live_uri}/playlist.m3u8`;
         return live_uri;
     } else if (url_full.includes('/socket_live')) {
-        const id_streams_relay = data_post_api.id;
+        const id_streams_relay = data_post_api.id_streams_relay;
         const socket_control = data_post_api.socket_control;
         // Kết nối đến server socket (ví dụ: localhost:3028)
         const socket = io("http://localhost:3028");
@@ -50,7 +50,6 @@ export default async function service() {
             setTimeout(() => {
                 socket.disconnect();
                 console.log("Đã ngắt kết nối và kết thúc tiến trình");
-                process.exit(0);
             }, 3000);
         });
 
