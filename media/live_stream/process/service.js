@@ -20,7 +20,7 @@ export default async function service() {
         let info = await mongo_find_query({ "external_connect.devices.lists.device_id": device_id }, "id");
         const id_device = info.mongo_results;
         
-        let live_uri = await mongo_find_query({ "media.audio.streams.id_devices": id_device }, "live_uri");
+        let live_uri = await mongo_find_query({ "media.audio.lives_url.id_devices": id_device }, "live_uri");
         live_uri = live_uri.mongo_results;
         live_uri = `http://vip.tecom.pro:3027/live/${live_uri}/playlist.m3u8`;
         return live_uri;
