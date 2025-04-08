@@ -14,7 +14,7 @@ export function updateGlobalSegmentNumber(dir, currentNumber) {
       }
     }
   }
-  return max + 1;
+  return max;
 }
 
 // Hàm dừng tiến trình FFmpeg cũ
