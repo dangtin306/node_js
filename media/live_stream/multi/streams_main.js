@@ -69,9 +69,17 @@ function updateGlobalSegmentNumber(dir, currentNumber) {
 
 // Hàm khởi động FFmpeg cho một luồng
 async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber) {
+  // if (ffmpegProcess && !ffmpegProcess.killed) {
+  //   console.log(`Đang dừng ffmpegProcess trước đó (PID: ${ffmpegProcess.pid})`);
+  //   ffmpegProcess.kill('SIGTERM');
+  //   await new Promise(resolve => ffmpegProcess.once('close', resolve));
+  // }
   if (ffmpegProcess && !ffmpegProcess.killed) {
-    console.log(`Đang dừng ffmpegProcess trước đó (PID: ${ffmpegProcess.pid})`);
-    ffmpegProcess.kill('SIGTERM');
+    console.log(`Killing previous ffmpegProcess (PID: ${ffmpegProcess.pid})`);
+    exec(`taskkill /F /PID ${ffmpegProcess.pid} /T`, (err, stdout, stderr) => {
+      if (err) console.error(`Lỗi khi kill: ${err}`);
+      else console.log(`FFmpeg đã được kill: ${stdout}`);
+    });
     await new Promise(resolve => ffmpegProcess.once('close', resolve));
   }
   let startNumber = updateGlobalSegmentNumber(liveDir, globalSegmentNumber);
