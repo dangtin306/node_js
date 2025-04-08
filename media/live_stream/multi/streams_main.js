@@ -5,7 +5,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import get_json_live from './get_json_live.js';
 import { spawn, exec } from 'child_process';
-
+import { updateGlobalSegmentNumber, stopFFmpegProcess } from './streams_process.js'; // Import hai hàm
 // Thiết lập đường dẫn file và thư mục
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -51,21 +51,6 @@ liveInfo.forEach(info => {
   }
 });
 
-// Hàm cập nhật số thứ tự đoạn toàn cục
-function updateGlobalSegmentNumber(dir, currentNumber) {
-  const files = fs.readdirSync(dir).filter(file => file.startsWith('segment_') && file.endsWith('.aac'));
-  let max = currentNumber;
-  for (let file of files) {
-    let match = file.match(/segment_(\d+)\.aac/);
-    if (match) {
-      const num = parseInt(match[1], 10);
-      if (num > max) {
-        max = num;
-      }
-    }
-  }
-  return max + 1;
-}
 
 // Hàm khởi động FFmpeg cho một luồng
 async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber) {
