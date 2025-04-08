@@ -75,7 +75,7 @@ async function startFFmpeg(liveDir, inputUrl, ffmpegProcess, globalSegmentNumber
   //   await new Promise(resolve => ffmpegProcess.once('close', resolve));
   // }
   if (ffmpegProcess && !ffmpegProcess.killed) {
-    console.log(`Killing previous ffmpegProcess (PID: ${ffmpegProcess.pid})`);
+    console.log(`Đang dừng ffmpegProcess trước đó (PID: ${ffmpegProcess.pid})`);
     exec(`taskkill /F /PID ${ffmpegProcess.pid} /T`, (err, stdout, stderr) => {
       if (err) console.error(`Lỗi khi kill: ${err}`);
       else console.log(`FFmpeg đã được kill: ${stdout}`);
