@@ -92,7 +92,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(port, () => {
-  console.log(`Live AAC streams available at:`);
+  console.log(`Live AAC lives_url available at:`);
   liveUris.forEach(liveUriKey => {
     console.log(`http://localhost:${port}/live/${liveUriKey}/playlist.m3u8`);
   });

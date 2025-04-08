@@ -100,11 +100,11 @@ export default async function devices() {
         if (result.mongo_status === "success") {
             const transformedResults = transformDevices(result.mongo_results);
             const updateFields = {};
-            updateFields["media.audio.streams"] = transformedResults;
+            updateFields["media.audio.lives_url"] = transformedResults;
             console.log(updateFields);
             // MongoDB query to update multiple fields
             const updateResult = await mongo_update_multi(
-                { "media.audio.streams": { $type: "array" } },
+                { "media.audio.lives_url": { $type: "array" } },
                 { $set: updateFields }
             );
             return (updateResult);
