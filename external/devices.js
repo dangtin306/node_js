@@ -130,7 +130,7 @@ export default async function devices() {
         data = JSON.stringify(data);
         // Gán lại vào object
         data_post_api.command_action = scaled_value;
-        mqtt_server(data_post_api.device_id, data_post_api);
+        mqtt_server(data_post_api.device_id, data);
         return data_post_api;
     }
     else {
