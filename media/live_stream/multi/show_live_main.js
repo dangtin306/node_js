@@ -12,6 +12,7 @@ const port = 3027;
 let liveInfo = await get_json_live();
 liveInfo = liveInfo.api_results.mongo_results;
 
+
 // Tạo mapping từ live_uri sang live_control
 const liveUriToLiveControl = {};
 liveInfo.forEach(info => {
@@ -73,6 +74,8 @@ const server = http.createServer(async (req, res) => {
     const safeUrl = req.url.slice(`/live/${liveUriKey}/`.length);
     const outputDir = path.join(__dirname, 'aac_output', streamName);
     const filePath = path.join(outputDir, safeUrl);
+    const randomTag = Math.floor(Math.random() * 2).toString();
+
     fs.stat(filePath, (err, stats) => {
       if (err) {
         res.writeHead(404);
@@ -81,7 +84,8 @@ const server = http.createServer(async (req, res) => {
       }
       res.writeHead(200, {
         'Content-Type': 'audio/aac',
-        'Content-Length': stats.size
+        'Content-Length': stats.size,
+        'X-Id3-Tag-Name': randomTag  // Header chứa id3 tag name
       });
       fs.createReadStream(filePath).pipe(res);
     });
