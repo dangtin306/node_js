@@ -131,7 +131,7 @@ export default async function devices() {
         // Chuyển đối tượng thành chuỗi JSON và in ra console
         data = JSON.stringify(data);
         mqtt_server(device_id, data);
-        return data_post_api;
+        return "ok";
     } 
     else if (url_full.includes('/device_restart')) {
         let id_devices = data_post_api.id_devices;
@@ -146,7 +146,7 @@ export default async function devices() {
         // Chuyển đối tượng thành chuỗi JSON và in ra console
         data = JSON.stringify(data);
         mqtt_server(device_id, data);
-        return data_post_api;
+        return "ok";
     }
     else if (url_full.includes('/radio_restart')) {
         let id_devices = data_post_api.id_devices;
@@ -164,6 +164,6 @@ export default async function devices() {
         return data_post_api;
     }
     else {
-        return "ko tìm thấy";
+        return "ok";
     }
 }
