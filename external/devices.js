@@ -130,8 +130,40 @@ export default async function devices() {
 
         // Chuyển đối tượng thành chuỗi JSON và in ra console
         data = JSON.stringify(data);
-        // Gán lại vào object
-        data_post_api.command_action = scaled_value;
+        mqtt_server(device_id, data);
+        return data_post_api;
+    } 
+    else if (url_full.includes('/device_restart')) {
+
+        let command_action = data_post_api.command_action;
+        let id_devices = data_post_api.id_devices;
+        let device_id = await mongo_find_query({ "external_connect.devices.lists.id": id_devices }, "device_id");
+        device_id = device_id.mongo_results;
+        // Khởi tạo đối tượng với các thuộc tính tương ứng
+        let data = {
+            command_code: 1,
+            device_id: device_id
+        };
+
+        // Chuyển đối tượng thành chuỗi JSON và in ra console
+        data = JSON.stringify(data);
+        mqtt_server(device_id, data);
+        return data_post_api;
+    }
+    else if (url_full.includes('/radio_restart')) {
+
+        let command_action = data_post_api.command_action;
+        let id_devices = data_post_api.id_devices;
+        let device_id = await mongo_find_query({ "external_connect.devices.lists.id": id_devices }, "device_id");
+        device_id = device_id.mongo_results;
+        // Khởi tạo đối tượng với các thuộc tính tương ứng
+        let data = {
+            command_code: 3,
+            device_id: device_id
+        };
+
+        // Chuyển đối tượng thành chuỗi JSON và in ra console
+        data = JSON.stringify(data);
         mqtt_server(device_id, data);
         return data_post_api;
     }
