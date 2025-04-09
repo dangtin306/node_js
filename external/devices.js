@@ -90,7 +90,7 @@ export default async function devices() {
                 id: device.id,
                 live_control: `live_${device.id}`,
                 socket_control: `socket_live_${device.id}`,
-                id_devices : device.id,
+                id_devices: device.id,
                 device_id: device.device_id
             }));
         }
@@ -114,11 +114,20 @@ export default async function devices() {
     } else if (url_full.includes('/device_edit')) {
         return data_post_api;
     } else if (url_full.includes('/volume_control')) {
+
         let command_action = data_post_api.command_action;
 
         // Scale từ 0–100 thành 0–21
         let scaled_value = Math.round((command_action / 100) * 21);
+        // Khởi tạo đối tượng với các thuộc tính tương ứng
+        let data = {
+            command_code: 4,
+            command_action: 10,
+            device_id: "f850119e9ef0"
+        };
 
+        // Chuyển đối tượng thành chuỗi JSON và in ra console
+        data = JSON.stringify(data);
         // Gán lại vào object
         data_post_api.command_action = scaled_value;
         mqtt_server(data_post_api.device_id, data_post_api);
