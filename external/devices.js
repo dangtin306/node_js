@@ -131,8 +131,13 @@ export default async function devices() {
 
         // Chuyển đối tượng thành chuỗi JSON và in ra console
         data = JSON.stringify(data);
+        const query = {  "external_connect.devices.lists.id": id_devices };
+        const set = {
+            $set: { "external_connect.devices.lists.$.volume": command_action }
+        };
+        const info = await mongo_update_single(query, set);
         mqtt_server(device_id, data);
-        return "ok";
+        return info;
     } 
     else if (url_full.includes('/device_restart')) {
         let id_devices = data_post_api.id_devices;

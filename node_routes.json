@@ -67,7 +67,7 @@
         "uri": "live",
         "module": "./media/live_stream/process/service.js",
         "function": "service"
-      }
+      } 
     ]
   },
   {
