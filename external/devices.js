@@ -134,8 +134,6 @@ export default async function devices() {
         return data_post_api;
     } 
     else if (url_full.includes('/device_restart')) {
-
-        let command_action = data_post_api.command_action;
         let id_devices = data_post_api.id_devices;
         let device_id = await mongo_find_query({ "external_connect.devices.lists.id": id_devices }, "device_id");
         device_id = device_id.mongo_results;
@@ -151,8 +149,6 @@ export default async function devices() {
         return data_post_api;
     }
     else if (url_full.includes('/radio_restart')) {
-
-        let command_action = data_post_api.command_action;
         let id_devices = data_post_api.id_devices;
         let device_id = await mongo_find_query({ "external_connect.devices.lists.id": id_devices }, "device_id");
         device_id = device_id.mongo_results;
