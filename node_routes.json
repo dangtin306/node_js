@@ -2,15 +2,13 @@
   {
     "router_name": "main_1_test_2",
     "uri": "/main_1/test_2",
-    "handler": {
-      "module": "./mongo_1/test_2.js",
-      "function": "test2"
-    }
+    "module": "./mongo_1/test_2.js",
+    "function": "test2"
   },
   {
     "router_name": "main_1_test_1",
     "uri": "/main_1/mongo_1",
-    "handlers": [
+    "children": [
       {
         "uri": "demo",
         "module": "./mongo_1/mongo_demo.js",
@@ -24,9 +22,30 @@
     ]
   },
   {
+    "router_name": "main_1_test_2",
+    "uri": "/main_1/test_3",
+    "children": [
+      {
+        "uri": "demo",
+        "children": [
+          {
+            "uri": "demo",
+            "children": [
+              {
+                "uri": "demo",
+                "module": "./mongo_1/test_2.js",
+                "function": "test2"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
     "router_name": "users",
     "uri": "/main_2/users",
-    "handlers": [
+    "children": [
       {
         "uri": "test",
         "module": "./users/test.js",
@@ -57,7 +76,7 @@
   {
     "router_name": "audio_files",
     "uri": "/main_2/audio",
-    "handlers": [
+    "children": [
       {
         "uri": "files",
         "module": "./media/audio/files.js",
@@ -67,13 +86,13 @@
         "uri": "live",
         "module": "./media/live_stream/process/service.js",
         "function": "service"
-      } 
+      }
     ]
   },
   {
     "router_name": "external",
     "uri": "/main_2/external",
-    "handlers": [
+    "children": [
       {
         "uri": "devices",
         "module": "./external/devices.js",
