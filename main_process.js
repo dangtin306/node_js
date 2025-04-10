@@ -34,7 +34,7 @@ export default async function main_process(req, res) {
     };
     try {
 
-        asyncLocalStorage.run(new Map([['url_full', req.url]]), async () => {
+        asyncLocalStorage.run(new Map(), async () => {
             // Sử dụng host từ header để làm base URL (đảm bảo req.headers.host tồn tại)
             const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
             // Chuyển đổi các query parameter thành object

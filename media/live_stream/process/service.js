@@ -12,7 +12,7 @@ import {
 import { asyncLocalStorage } from '../../../requestContext.js';
 import { io } from "socket.io-client";
 
-async function handleSocketLive(id_streams_relay, socket_control) {
+async function handleSocketLive(data_post_socket, socket_control) {
     return new Promise((resolve, reject) => {
         const socket = io("http://localhost:3028");
         const timeout = 5000; // Timeout sau 5 giây
@@ -29,13 +29,15 @@ async function handleSocketLive(id_streams_relay, socket_control) {
             console.log("Đã kết nối Socket.IO");
 
             // Gửi sự kiện tới server
-            socket.emit(socket_control, { linklive: id_streams_relay }, (response) => {
+            socket.emit(socket_control, data_post_socket, (response) => {
                 clearTimeout(timer); // Hủy timeout khi nhận được phản hồi
                 if (response) {
+                    console.log(`Đã gửi sự kiện ${socket_control} với dữ liệu: ${data_post_socket}`);
+
                     console.log(`Server xác nhận nhận sự kiện ${socket_control}:`, response);
                     resolve(response);
                 } else {
-                    console.log(`Đã gửi sự kiện ${socket_control} với dữ liệu: { linklive: ${id_streams_relay} }`);
+                    console.log(`Đã gửi sự kiện ${socket_control} với dữ liệu: ${data_post_socket}`);
                     resolve("Đã gửi sự kiện nhưng không nhận được phản hồi từ server");
                 }
             });
@@ -78,14 +80,19 @@ export default async function service() {
     } else if (url_full.includes('/socket_live')) {
         const id_streams_relay = data_post_api.id_streams_relay;
         const socket_control = data_post_api.socket_control;
+        // Thêm thuộc tính linklive bằng giá trị của id_streams_relay
+        const data_post_socket = data_post_api;
+        data_post_socket.linklive = id_streams_relay;
+
+        data_post_api.linklive = id_streams_relay;
         // Kết nối đến server socket (ví dụ: localhost:3028)
         try {
-            const result = await handleSocketLive(id_streams_relay, socket_control);
+            const result = await handleSocketLive(data_post_socket, socket_control);
             console.log("Kết quả từ hàm handleSocketLive:", result);
             return result;
         } catch (error) {
-            console.error("Lỗi khi xử lý Socket.IO:", error);
-            return "Lỗi khi xử lý Socket.IO";
+            console.error("Lỗi khi xử lý Socket.IO:");
+            return ("Lỗi khi xử lý Socket.IO:", error);;
         }
     } else {
         return "ko tìm thấy";

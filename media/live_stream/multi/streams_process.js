@@ -1,6 +1,7 @@
 import fs from 'fs';
-import { exec } from 'child_process';
-
+import { spawn, exec } from 'child_process';
+import path from 'path';
+import { streams_category } from './streams_category.js'; // Import hai hàm
 // Hàm cập nhật số thứ tự đoạn toàn cục
 export function updateGlobalSegmentNumber(dir, currentNumber) {
   const files = fs.readdirSync(dir).filter(file => file.startsWith('segment_') && file.endsWith('.aac'));
@@ -45,4 +46,20 @@ export async function stopFFmpegProcess(ffmpegProcess) {
   } else {
     console.log('Không có ffmpegProcess cũ để dừng hoặc ffmpegProcess không hợp lệ.');
   }
+}
+
+// Hàm khởi động FFmpeg cho một luồng
+export async function startFFmpeg(liveDir, ffmpegProcess, globalSegmentNumber) {
+  // Dừng tiến trình FFmpeg cũ nếu có
+  await stopFFmpegProcess(ffmpegProcess);
+
+  // Cập nhật số đoạn và khởi động FFmpeg mới
+  let startNumber = updateGlobalSegmentNumber(liveDir, globalSegmentNumber);
+  // console.log(`Khởi động FFmpeg với đầu vào: ${url_live_relay} (bắt đầu từ số ${startNumber})`);
+
+  const newProcess = await streams_category(liveDir, startNumber);
+
+  newProcess.stderr.on('data', (data) => console.error(`Lỗi FFmpeg: ${data}`));
+  newProcess.on('close', (code) => console.log(`FFmpeg thoát với mã ${code}`));
+  return newProcess;
 }
