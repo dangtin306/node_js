@@ -61,7 +61,7 @@ export default async function get_text_image(req, res, send_api_error) {
             return res.status(405).send('Không tìm thấy.');
         }
     } catch (error) {
-        send_api_error(error); // Gửi kết quả qua send_api_success
+        send_api_error(res, error); // Gửi kết quả qua send_api_success
     }
 }
 function decodeData(data) {

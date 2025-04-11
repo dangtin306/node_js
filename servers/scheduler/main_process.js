@@ -1,37 +1,10 @@
-// main_process.js
-import get_text_image from './ai/images_text_multi.js';
-import router_module from './router_module.js';
-import { asyncLocalStorage } from './requestContext.js';
+import { send_api_success, send_api_error, main_process_url } from '../process/config.js';
+import { asyncLocalStorage } from '../../requestContext.js';
 import getRawBody from 'raw-body';
-import mqtt_server from './external/mqtt/home.js';
 
-// Hàm xử lý logic cho text image search
-const textImageSearch = () => {
-    // Giả sử đây là hàm thực hiện logic tìm kiếm và có thể ném lỗi nếu có vấn đề
-    // Nếu thành công, trả về dữ liệu
-    return { message: "Kết quả tìm kiếm hình ảnh dựa trên văn bản" };
-};
-mqtt_server();
 console.log("connect mqtt_server");
 export default async function main_process(req, res) {
 
-    const send_api_success = (data) => {
-        if (!res.headersSent) {
-            res.status(200).json({
-                api_status: "success", api_results: data
-            });
-        }
-    };
-    const send_api_error = (error) => {
-        if (!res.headersSent) {
-            const data = error.message;
-            if (data) {
-                res.status(200).json({ api_status: "error", api_error_log: data });
-            } else {
-                res.status(200).json({ api_status: "error", api_error_log: error });
-            }
-        }
-    };
     try {
 
         asyncLocalStorage.run(new Map(), async () => {
@@ -77,22 +50,6 @@ export default async function main_process(req, res) {
             }
         });
     } catch (error) {
-        send_api_error(error); // Gửi kết quả qua send_api_success
-    }
-}
-export async function main_process_url(req, res, send_api_success, send_api_error) {
-    try {
-        if (req.url.includes('/main_1') || req.url.includes('/main_2')) {
-            router_module(req, res, send_api_success, send_api_error);
-        } else {
-            try {
-                get_text_image(req, res, send_api_error);
-            } catch (error) {
-                send_api_error(error); // Gửi kết quả qua send_api_success
-            }
-        }
-    } catch (error) {
-        console.log(1234);
-        send_api_error(error); // Gửi kết quả qua send_api_success
+        send_api_error(res, error); // Gửi kết quả qua send_api_success
     }
 }

@@ -42,17 +42,17 @@ function registerRoute(router, route, parentUri = '', send_api_success, send_api
     router.on(['GET', 'POST'], fullUri, async (req, res, params) => {
       try {
         const result = await processRoute(route);
-        send_api_success(result);
+        send_api_success(res, result);
       } catch (error) {
-        send_api_error(error);
+        send_api_error(res, error);
       }
     });
     router.on(['GET', 'POST'], uriPattern, async (req, res, params) => {
       try {
         const result = await processRoute(route);
-        send_api_success(result);
+        send_api_success(res, result);
       } catch (error) {
-        send_api_error(error);
+        send_api_error(res, error);
       }
     });
   }

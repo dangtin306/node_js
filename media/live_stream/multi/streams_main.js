@@ -94,6 +94,14 @@ asyncLocalStorage.run(new Map(), async () => {
 const httpServer = createServer();
 const io = new Server(httpServer, { cors: { origin: '*' } });
 
+// Định nghĩa hàm xử lý chung cho sự kiện
+function process_socket(liveControl, jsonData, callback) {
+  // Gọi hàm xử lý sự kiện
+  handleStreamUpdate(liveControl, jsonData);
+  // Gửi phản hồi về client, dùng jsonData.category nếu có, ngược lại trả lại toàn bộ jsonData
+  callback({ socket_status: "success" });
+}
+
 io.on('connection', (socket) => {
   console.log('Đã kết nối Socket.IO');
   liveInfo.forEach(info => {
@@ -101,20 +109,17 @@ io.on('connection', (socket) => {
       asyncLocalStorage.run(new Map(), async () => {
         if (jsonData.category) {
           asyncLocalStorage.getStore().set('category', jsonData.category);
-          // Gọi hàm xử lý sự kiện
-          handleStreamUpdate(info.live_control, jsonData);
-          // Gửi phản hồi về client
-          callback({ socket_status: jsonData.category });
+          if (jsonData.id_files) {
+            asyncLocalStorage.getStore().set('id_files', jsonData.id_files);
+            process_socket(info.live_control, jsonData, callback);
+          } else {
+            process_socket(info.live_control, jsonData, callback);
+          }
         }
         else {
-          asyncLocalStorage.getStore().set('category', 'streams_relay');
-          // Gọi hàm xử lý sự kiện
-          handleStreamUpdate(info.live_control, jsonData);
-          // Gửi phản hồi về client
-          callback({ socket_status: jsonData });
+          callback({ socket_status: "cancel", socket_results: "missing category field" });
         }
       });
-
     });
   });
 

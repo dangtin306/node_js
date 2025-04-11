@@ -2,7 +2,7 @@
   {
     "router_name": "main_1_test_2",
     "uri": "/main_1/test_2",
-    "module": "./mongo_1/test_2.js",
+    "module": "../../mongo_1/test_2.js",
     "function": "test2"
   },
   {
@@ -11,12 +11,12 @@
     "children": [
       {
         "uri": "demo",
-        "module": "./mongo_1/mongo_demo.js",
+        "module": "../../mongo_1/mongo_demo.js",
         "function": "mongo_demo"
       },
       {
         "uri": "api",
-        "module": "./mongo_1/api_public.js",
+        "module": "../../mongo_1/api_public.js",
         "function": "api_public"
       }
     ]
@@ -33,7 +33,7 @@
             "children": [
               {
                 "uri": "demo",
-                "module": "./mongo_1/test_2.js",
+                "module": "../../mongo_1/test_2.js",
                 "function": "test2"
               }
             ]
@@ -48,27 +48,27 @@
     "children": [
       {
         "uri": "test",
-        "module": "./users/test.js",
+        "module": "../../users/test.js",
         "function": "test"
       },
       {
         "uri": "giang",
-        "module": "./users/giang.js",
+        "module": "../../users/giang.js",
         "function": "giang"
       },
       {
         "uri": "ads_open",
-        "module": "./users/ads_open.js",
+        "module": "../../users/ads_open.js",
         "function": "ads_open"
       },
       {
         "uri": "back_up",
-        "module": "./mongo_1/back_up.js",
+        "module": "../../mongo_1/back_up.js",
         "function": "back_up"
       },
       {
         "uri": "editor",
-        "module": "./users/editor.js",
+        "module": "../../users/editor.js",
         "function": "editor"
       }
     ]
@@ -79,12 +79,12 @@
     "children": [
       {
         "uri": "files",
-        "module": "./media/audio/files.js",
+        "module": "../../media/audio/files.js",
         "function": "files"
       },
       {
         "uri": "live",
-        "module": "./media/live_stream/process/service.js",
+        "module": "../../media/live_stream/process/service.js",
         "function": "service"
       }
     ]
@@ -95,17 +95,17 @@
     "children": [
       {
         "uri": "devices",
-        "module": "./external/devices.js",
+        "module": "../../external/devices.js",
         "function": "devices"
       },
       {
         "uri": "mqtt",
-        "module": "./external/mqtt/test.js",
+        "module": "../../external/mqtt/test.js",
         "function": "mqtt_server"
       },
       {
         "uri": "check_live",
-        "module": "./external/check_live.js",
+        "module": "../../external/check_live.js",
         "function": "check_live"
       }
     ]

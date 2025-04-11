@@ -7,7 +7,7 @@ import cors from "cors";
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { upload_files_audio } from './media/audio/upload_file.js';
+import { upload_files_audio } from '../../media/audio/upload_file.js';
 
 // Tạo __dirname cho ES module
 const __filename = fileURLToPath(import.meta.url);
