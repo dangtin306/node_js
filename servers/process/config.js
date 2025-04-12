@@ -13,14 +13,11 @@ export async function send_api_success(res, data) {
 
 export async function send_api_error(res, error) {
     if (!res.headersSent) {
-        const data = error.message;
-        if (data) {
-            res.status(200).json({ api_status: "error", api_error_log: data });
-        } else {
-            res.status(200).json({ api_status: "error", api_error_log: error });
-        }
+        const data = error?.message || error;
+        res.status(200).json({ api_status: "error", api_error_log: data });
     }
 }
+
 export async function main_process_url(req, res, send_api_success, send_api_error) {
     try {
         if (req.url.includes('/text_image_search') || req.url.includes('/text_speech') || req.url.includes('/speech_text')
