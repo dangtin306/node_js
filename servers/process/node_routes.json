@@ -109,5 +109,16 @@
         "function": "check_live"
       }
     ]
+  },
+  {
+    "router_name": "scheduler",
+    "uri": "/scheduler",
+    "children": [
+      {
+        "uri": "test",
+        "module": "../../scheduler/test.js",
+        "function": "test"
+      }
+    ]
   }
 ]
