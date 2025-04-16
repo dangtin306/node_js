@@ -1,9 +1,9 @@
 import { send_api_success, send_api_error, main_process_url } from '../process/config.js';
 import { asyncLocalStorage } from '../../requestContext.js';
 import getRawBody from 'raw-body';
-import { loadJobsFromMongo } from '../../schedule/schedule.js';
+import { startJobScheduler } from '../../scheduler/schedule.js';
 
-loadJobsFromMongo();
+startJobScheduler();
 
 export default async function main_process(req, res) {
 

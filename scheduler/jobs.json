@@ -1,7 +1,7 @@
 [
   {
     "name": "job-1",
-    "path": "./schedule/jobs/job-1.js",
+    "path": "./scheduler/jobs/job-1.js",
     "timeout": "5s",
     "interval": "10s",
     "worker": {
@@ -16,7 +16,7 @@
   },
   {
     "name": "job-2",
-    "path": "./schedule/jobs/job-2.js",
+    "path": "./scheduler/jobs/job-2.js",
     "timeout": "5s",
     "interval": "10s",
     "worker": {
@@ -31,7 +31,7 @@
   },
   {
     "name": "job-3",
-    "path": "./schedule/jobs/job-3.js",
+    "path": "./scheduler/jobs/job-3.js",
     "timeout": "5s",
     "interval": "10s",
     "worker": {
