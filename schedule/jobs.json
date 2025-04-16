@@ -1,0 +1,47 @@
+[
+  {
+    "name": "job-1",
+    "path": "./schedule/jobs/job-1.js",
+    "timeout": "5s",
+    "interval": "10s",
+    "worker": {
+      "workerData": {
+        "url": "https://example.com/api/send",
+        "data": {
+          "message": "Job 1 ⬜!",
+          "type": "broadcast"
+        }
+      }
+    }
+  },
+  {
+    "name": "job-2",
+    "path": "./schedule/jobs/job-2.js",
+    "timeout": "5s",
+    "interval": "10s",
+    "worker": {
+      "workerData": {
+        "url": "https://example.com/api/send",
+        "data": {
+          "message": "Job 2 🟪!",
+          "type": "broadcast"
+        }
+      }
+    }
+  },
+  {
+    "name": "job-3",
+    "path": "./schedule/jobs/job-3.js",
+    "timeout": "5s",
+    "interval": "10s",
+    "worker": {
+      "workerData": {
+        "url": "https://example.com/api/send",
+        "data": {
+          "message": "Job 3 🟨!",
+          "type": "broadcast"
+        }
+      }
+    }
+  }
+]
