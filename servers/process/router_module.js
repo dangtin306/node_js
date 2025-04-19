@@ -67,7 +67,7 @@ function registerRoute(router, route, parentUri = '', send_api_success, send_api
 
 export default async function router_module(req, res, send_api_success, send_api_error) {
   const router = FindMyWay({
-    defaultRoute: (req, res) => send_api_error(res, "Không tìm thấy")
+    defaultRoute: (req, res) => send_api_error(res, "Not found")
   });
 
   // Đăng ký tất cả các route từ node_routes.json

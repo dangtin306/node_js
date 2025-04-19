@@ -9,11 +9,7 @@ import {
 } from '../mongo_1/config/main_process.js';
 
 
-export default async function test() {
-    const query = { "users.pass.id": 3545343 };
-    const set = {
-        $set: { "users.pass.$.value": "1234567" }
-    };
-    const info = await mongo_update_single(query, set);
+export default async function get_json() {
+    const info = await mongo_get("settings.schedule");
     return info;
 }

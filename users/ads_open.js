@@ -72,7 +72,7 @@ export default async function ads_open() {
             }
         }
         else {
-            return ('không tìm thấy');
+            return ('Not found');
         }
     } else {
         return ('ko có device_id');

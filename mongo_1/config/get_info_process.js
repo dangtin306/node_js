@@ -193,8 +193,8 @@ export async function mongo_find_query(query, field) {
     // Tìm document dựa trên query
     const result = await collection.findOne(query);
     if (!result) {
-      console.log("Không tìm thấy document phù hợp.");
-      return { mongo_status: "cancel", mongo_results: "Không tìm thấy document phù hợp." };
+      console.log("Not found document phù hợp.");
+      return { mongo_status: "cancel", mongo_results: "Not found document phù hợp." };
     }
 
     // Xác định key của query
@@ -223,8 +223,8 @@ export async function mongo_find_query(query, field) {
     // Lấy mảng dữ liệu từ document dựa trên basePath
     const nestedData = getNested(result, basePath);
     if (!nestedData || !Array.isArray(nestedData)) {
-      console.log(`Không tìm thấy mảng dữ liệu tại đường dẫn: ${basePath}`);
-      return { mongo_status: "cancel", mongo_results: `Không tìm thấy mảng dữ liệu tại đường dẫn: ${basePath}` };
+      console.log(`Not found mảng dữ liệu tại đường dẫn: ${basePath}`);
+      return { mongo_status: "cancel", mongo_results: `Not found mảng dữ liệu tại đường dẫn: ${basePath}` };
     }
 
     // Tìm phần tử trong mảng có filterField === filterValue.
@@ -238,8 +238,8 @@ export async function mongo_find_query(query, field) {
     });
 
     if (!element) {
-      console.log("Không tìm thấy phần tử phù hợp trong mảng.");
-      return { mongo_status: "cancel", mongo_results: "Không tìm thấy phần tử phù hợp trong mảng." };
+      console.log("Not found phần tử phù hợp trong mảng.");
+      return { mongo_status: "cancel", mongo_results: "Not found phần tử phù hợp trong mảng." };
     }
 
     // Nếu có truyền field thì trả về giá trị của field đó, ngược lại trả về toàn bộ phần tử (JSON)

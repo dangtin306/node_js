@@ -115,9 +115,9 @@
     "uri": "/scheduler",
     "children": [
       {
-        "uri": "test",
-        "module": "../../scheduler/test.js",
-        "function": "test"
+        "uri": "get_json",
+        "module": "../../scheduler/get_json.js",
+        "function": "get_json"
       }
     ]
   }

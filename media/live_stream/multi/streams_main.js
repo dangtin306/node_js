@@ -25,7 +25,7 @@ try {
 // Tìm stream mặc định (id: 1)
 const defaultStream = thirdPartyStreams.find(s => s.id === 1 && s.status === true);
 if (!defaultStream) {
-  console.error('Không tìm thấy hoặc stream mặc định (id: 1) không hoạt động');
+  console.error('Not found hoặc stream mặc định (id: 1) không hoạt động');
   process.exit(1); // Thoát nếu stream mặc định không khả dụng
 }
 
@@ -63,8 +63,8 @@ export async function handleStreamUpdate(liveControl, jsonData) {
   const id = parseInt(linkLiveValue, 10); // Chuyển linkLiveValue thành số nguyên
   const stream = thirdPartyStreams.find(s => s.id === id && s.status === true);
   if (!stream) {
-    console.error(`Không tìm thấy stream hoạt động cho id ${id}`);
-    return; // Không thay đổi luồng nếu không tìm thấy
+    console.error(`Not found stream hoạt động cho id ${id}`);
+    return; // Không thay đổi luồng nếu Not found
   }
 
   const newInputUrl = stream.live_url;

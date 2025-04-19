@@ -50,7 +50,7 @@ export default async function get_text_image(req, res) {
         return res.status(200).send('ok');
     } else {
         // Trả về mã trạng thái 405 nếu không phải là GET
-        // return res.status(405).send('Không tìm thấy.');
+        // return res.status(405).send('Not found.');
     }
 
 }
