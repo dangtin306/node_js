@@ -12,7 +12,7 @@ import { asyncLocalStorage } from '../requestContext.js';
 
 export default async function edit_json_and_save() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
-
+    console.log(data_post_api);
     const info = await mongo_get("settings.schedule");
     return info;
 }
