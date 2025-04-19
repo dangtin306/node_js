@@ -118,6 +118,11 @@
         "uri": "get_json",
         "module": "../../scheduler/get_json.js",
         "function": "get_json"
+      },
+      {
+        "uri": "edit_json_and_save",
+        "module": "../../scheduler/edit_json_and_save.js",
+        "function": "edit_json_and_save"
       }
     ]
   }
