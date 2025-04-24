@@ -111,6 +111,17 @@
     ]
   },
   {
+    "router_name": "ai",
+    "uri": "/ai",
+    "children": [
+      {
+        "uri": "text_to_speech",
+        "module": "../../ai/text_to_speech.js",
+        "function": "text_to_speech"
+      }
+    ]
+  },
+  {
     "router_name": "scheduler",
     "uri": "/scheduler",
     "children": [
