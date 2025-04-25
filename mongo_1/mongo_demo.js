@@ -4,7 +4,8 @@ import {
     mongo_detect_single,
     mongo_insert_query,
     mongo_delete_query,
-    mongo_update_single
+    mongo_update_single,
+    mongo_update_multi
 } from './config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
 export default async function mongo_demo() {
@@ -49,6 +50,11 @@ export default async function mongo_demo() {
         const query = { "media.audio.files.id": 3 };
         const set = { "media.audio.files.$.title": "Quản lý đơn hàngg" };
         const info = await mongo_update_single(query, set);
+        return info;
+    } else if (url_full.includes('/mongo_update_multi_demo')) {
+        const query = { "users.bio_links.$.id_users": 34631 };
+        const set = { "lienket": { "description": "sdsdsd", "link": "sdsdsd" }, "social": { "facebook": "s6576765", "insta": "dssdds", "tiktok": "12345643" }, "username": "admin" };
+        const info = await mongo_update_multi(query, set);
         return info;
     }
 }
