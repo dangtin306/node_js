@@ -52,8 +52,19 @@ export default async function mongo_demo() {
         const info = await mongo_update_single(query, set);
         return info;
     } else if (url_full.includes('/mongo_update_multi_demo')) {
-        const query = { "users.bio_links.$.id_users": 34631 };
-        const set = { "lienket": { "description": "sdsdsd", "link": "sdsdsd" }, "social": { "facebook": "s6576765", "insta": "dssdds", "tiktok": "12345643" }, "username": "admin" };
+        const query = { "users.bio_links.id_users": 34631 };
+        const set = {
+            "users.bio_links.$.lienket": {
+                description: "sdsdsd",
+                link: "sdsdsd"
+            },
+            "users.bio_links.$.social": {
+                facebook: "s6576765",
+                insta: "dssdds",
+                tiktok: "12345643"
+            },
+            "users.bio_links.$.username": "admin"
+        };
         const info = await mongo_update_multi(query, set);
         return info;
     }
