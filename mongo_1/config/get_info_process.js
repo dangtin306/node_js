@@ -49,15 +49,27 @@ export async function mongo_get_multi(query, field) {
         }
       });
     } else if (typeof field === "object" && field.path) {
-      // Tách riêng path và các điều kiện còn lại
       const { path, ...filters } = field;
       const filterKeys = Object.keys(filters);
 
       if (filterKeys.length > 0) {
-        // Với mỗi key trong filters, tạo điều kiện { $eq: ["$$item.key", filters[key]] }
-        const conditions = filterKeys.map(key => ({
-          $eq: [`$$item.${key}`, filters[key]]
-        }));
+        // Tạo điều kiện tương ứng cho từng key trong filters
+        const conditions = filterKeys.map(key => {
+          const value = filters[key];
+
+          // Nếu value là mảng, điều kiện: item[key] (mảng) phải có ít nhất một phần tử trùng
+          if (Array.isArray(value)) {
+            return {
+              $gt: [
+                { $size: { $setIntersection: [`$$item.${key}`, value] } },
+                0
+              ]
+            };
+          }
+
+          // Ngược lại, so sánh chính xác
+          return { $eq: [`$$item.${key}`, value] };
+        });
 
         pipeline.push({
           $project: {
@@ -72,7 +84,7 @@ export async function mongo_get_multi(query, field) {
           }
         });
       } else {
-        // Nếu không có điều kiện filter nào, chỉ project nguyên mảng
+        // Nếu không có filter, chỉ project nguyên mảng
         pipeline.push({
           $project: {
             _id: 0,
@@ -99,6 +111,7 @@ export async function mongo_get_multi(query, field) {
     };
   }
 }
+
 
 export async function count_document(query) {
   if (!query || typeof query !== "object") {
