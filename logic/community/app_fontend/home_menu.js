@@ -53,14 +53,14 @@ export default async function home_menu() {
 
         while (i < filter_category.length) {
             const category = filter_category[i];
-            const category_id = category.id;
+            const option = category.option;
             const query = {
                 "app_structure.app_fontend.home_menu.services": { $exists: true }
             };
             const field = {
                 path: "app_structure.app_fontend.home_menu.services",
                 status: "show",
-                category_id: category_id
+                category: [option]
             };
             let services = await mongo_get_multi(query, field);
             if (services.mongo_status !== "success") {
