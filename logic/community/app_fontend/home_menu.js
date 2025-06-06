@@ -42,7 +42,7 @@ export default async function home_menu() {
 
         // 4) Lấy mảng thực từ mongo_results
         categories = categories.mongo_results;
-        console.log(categories);
+        // console.log(categories);
         // 5) Lọc (filter) theo cả national_market
         const filter_category = categories.filter(item =>
             Array.isArray(item.national_market) &&
