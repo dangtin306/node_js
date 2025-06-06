@@ -48,8 +48,6 @@ export default async function home_menu() {
         // Sắp xếp sao cho phần tử có stt nhỏ nhất nằm đầu tiên
         filter_category.sort((a, b) => a.stt - b.stt);
 
-        console.log(filter_category);
-
         let i = 0;
         const logic_done = [];
 
@@ -57,11 +55,12 @@ export default async function home_menu() {
             const category = filter_category[i];
             const category_id = category.id;
             const query = {
-                "app_structure.app_fontend.home_menu.services.category_id": category_id
+                "app_structure.app_fontend.home_menu.services": { $exists: true }
             };
             const field = {
                 path: "app_structure.app_fontend.home_menu.services",
-                status: "show"
+                status: "show",
+                category_id: category_id
             };
             let services = await mongo_get_multi(query, field);
             if (services.mongo_status !== "success") {
@@ -72,6 +71,8 @@ export default async function home_menu() {
                 Array.isArray(item.national_market) &&
                 item.national_market.includes(national_market)
             );
+            // Sắp xếp sao cho phần tử có stt nhỏ nhất nằm đầu tiên
+            filter_services.sort((a, b) => a.stt - b.stt);
             logic_done.push({
                 ...category,
                 data: filter_services
