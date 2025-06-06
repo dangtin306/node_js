@@ -122,6 +122,17 @@
     ]
   },
   {
+    "router_name": "community",
+    "uri": "/community",
+    "children": [
+      {
+        "uri": "home_menu",
+        "module": "../../logic/community/app_fontend/home_menu.js",
+        "function": "home_menu"
+      }
+    ]
+  },
+  {
     "router_name": "scheduler",
     "uri": "/scheduler",
     "children": [
