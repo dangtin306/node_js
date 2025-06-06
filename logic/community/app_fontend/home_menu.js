@@ -31,24 +31,25 @@ export default async function home_menu() {
             domain: [main_domain],
             status: "show"
         };
-
         // 2) Gọi mongo_get_multi
         let categories = await mongo_get_multi(query, field);
-
         // 3) Nếu có lỗi (mongo_status !== "success"), trả về luôn object lỗi
         if (categories.mongo_status !== "success") {
             return categories;  // logic cũ không đổi
         }
-
         // 4) Lấy mảng thực từ mongo_results
         categories = categories.mongo_results;
         // console.log(categories);
         // 5) Lọc (filter) theo cả national_market
-        const filter_category = categories.filter(item =>
+        let filter_category = categories.filter(item =>
             Array.isArray(item.national_market) &&
             item.national_market.includes(national_market)
         );
+        // Sắp xếp sao cho phần tử có stt nhỏ nhất nằm đầu tiên
+        filter_category.sort((a, b) => a.stt - b.stt);
+
         console.log(filter_category);
+
         let i = 0;
         const logic_done = [];
 
