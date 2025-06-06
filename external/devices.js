@@ -71,8 +71,7 @@ export default async function devices() {
                 const query = { "external_connect.devices.lists": { $exists: true } };
                 const field = {
                     path: "external_connect.devices.lists",
-                    filter_field: "id",
-                    filter_values: id_devices
+                    id: id_devices
                 };
                 const result = await mongo_get_multi(query, field);
                 return result;

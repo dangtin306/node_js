@@ -20,14 +20,18 @@ export default async function home_menu() {
     const category_pro = url_param.category_pro;
     const main_domain = url_param.main_domain;
     const national_market = url_param.national_market;
-    if (main_domain && main_domain.includes('hust')) {
+    if (main_domain) {
         // 1) Chuẩn bị query và field
         const query = {
-            "app_structure.app_fontend.home_menu.categories.category_pro": category_pro
+            "app_structure.app_fontend.home_menu.categories.category_pro": { $exists: true }
         };
         const field = {
-            path: "app_structure.app_fontend.home_menu.categories"
+            path: "app_structure.app_fontend.home_menu.categories",
+            category_pro: category_pro,
+            domain: [main_domain],
+            status: "show"
         };
+
         // 2) Gọi mongo_get_multi
         let categories = await mongo_get_multi(query, field);
 
@@ -38,42 +42,42 @@ export default async function home_menu() {
 
         // 4) Lấy mảng thực từ mongo_results
         categories = categories.mongo_results;
-
-        // 5) Lọc (filter) theo cả national_market và domain
-        //    - item.national_market phải chứa giá trị national_market
-        //    - item.domain phải là mảng và chứa main_domain
+        console.log(categories);
+        // 5) Lọc (filter) theo cả national_market
         const filter_category = categories.filter(item =>
             Array.isArray(item.national_market) &&
-            item.national_market.includes(national_market) &&
-            Array.isArray(item.domain) &&
-            item.domain.includes(main_domain)
+            item.national_market.includes(national_market)
         );
+        console.log(filter_category);
         let i = 0;
         const logic_done = [];
-        
+
         while (i < filter_category.length) {
-          const category = filter_category[i];
-          const category_id = category.id;
-          const query = {
-            "app_structure.app_fontend.home_menu.services.category_id": category_id
-          };
-          const field = { path: "app_structure.app_fontend.home_menu.services" };
-          let services = await mongo_get_multi(query, field);
-          if (services.mongo_status !== "success") {
-            return services;
-          }
-          services = services.mongo_results;
-          const filter_services = services.filter(item =>
-            Array.isArray(item.national_market) &&
-            item.national_market.includes(national_market)
-          );
-          logic_done.push({
-            ...category,
-            data: filter_services
-          });
-          i++;
+            const category = filter_category[i];
+            const category_id = category.id;
+            const query = {
+                "app_structure.app_fontend.home_menu.services.category_id": category_id
+            };
+            const field = {
+                path: "app_structure.app_fontend.home_menu.services",
+                status: "show"
+            };
+            let services = await mongo_get_multi(query, field);
+            if (services.mongo_status !== "success") {
+                return services;
+            }
+            services = services.mongo_results;
+            const filter_services = services.filter(item =>
+                Array.isArray(item.national_market) &&
+                item.national_market.includes(national_market)
+            );
+            logic_done.push({
+                ...category,
+                data: filter_services
+            });
+            i++;
         }
-        
+
         const output = { home_menu: logic_done };
         return output;
     }
