@@ -8,7 +8,7 @@ import {
   mongo_delete_query,
   mongo_update_single,
   mongo_update_multi
-} from './config/main_process.js';
+} from './main_process.js';
 
 
 
