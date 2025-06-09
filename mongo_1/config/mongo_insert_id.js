@@ -25,7 +25,7 @@ export async function mongo_insert_id(query, set) {
     maxId = maxId.reduce((max, data) => data.id > max ? data.id : max, 0);
     // Clone `set` và gán thêm id
     const payload = {
-      id: maxId,
+      id: maxId + 1,
       ...set
     };
     const insertData = {
