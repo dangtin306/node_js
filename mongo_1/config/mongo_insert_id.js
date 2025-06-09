@@ -10,11 +10,12 @@ import {
   mongo_update_multi
 } from '../mongo_1/config/main_process.js';
 
-function hasIdField(obj) {
-  return Object.prototype.hasOwnProperty.call(obj, 'id');
-}
+
 
 export async function mongo_insert_id(query, set) {
+  function hasIdField(obj) {
+    return Object.prototype.hasOwnProperty.call(obj, 'id');
+  }
   if (hasIdField(set)) {
     return "lỗi có trường id";
   } else {
