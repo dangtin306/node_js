@@ -1,4 +1,4 @@
-export { mongo_insert_query } from './insert_process.js';
+import { mongo_insert_query } from './insert_process.js';
 
 
 export async function mongo_insert_id(query, set) {
