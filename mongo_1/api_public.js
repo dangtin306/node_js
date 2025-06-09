@@ -5,7 +5,8 @@ import {
     mongo_insert_query,
     mongo_delete_query,
     mongo_update_single,
-    mongo_update_multi
+    mongo_update_multi,
+    mongo_insert_id
 } from './config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
 export default async function api_public() {
@@ -41,7 +42,12 @@ export default async function api_public() {
         const set = data_post_api.set;
         const info = await mongo_update_single(query, set);
         return info;
-    } else if (url_full.includes('/mongo_update_multi_api')) {
+    }  else if (url_full.includes('/mongo_insert_id')) {
+        const query = data_post_api.query;
+        const set = data_post_api.set;
+        const info = await mongo_insert_id(query, set);
+        return info;
+    }  else if (url_full.includes('/mongo_update_multi_api')) {
         const query = data_post_api.query;
         const set = data_post_api.set;
         const info = await mongo_update_multi(query, set);

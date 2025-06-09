@@ -133,6 +133,17 @@
     ]
   },
   {
+    "router_name": "settings",
+    "uri": "/settings",
+    "children": [
+      {
+        "uri": "home_menu",
+        "module": "../../logic/settings/insert.js",
+        "function": "settings_insert"
+      }
+    ]
+  },
+  {
     "router_name": "scheduler",
     "uri": "/scheduler",
     "children": [
