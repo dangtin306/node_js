@@ -129,6 +129,11 @@
         "uri": "home_menu",
         "module": "../../logic/community/app_fontend/home_menu.js",
         "function": "home_menu"
+      },
+      {
+        "uri": "sidebar_menu",
+        "module": "../../logic/community/app_fontend/sidebar_menu.js",
+        "function": "sidebar_menu"
       }
     ]
   },
