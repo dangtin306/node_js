@@ -17,18 +17,19 @@ export default async function sidebar_menu() {
     const url_param = asyncLocalStorage.getStore().get('url_param');
 
     const apikey = url_param.apikey;
-    const category_pro = url_param.category_pro;
     const main_domain = url_param.main_domain;
     const national_market = url_param.national_market;
+    const auth_logic = (apikey && apikey.length >= 5) ? 1 : 0;
+
     if (main_domain) {
         // 1) Chuẩn bị query và field
         const query = {
-            "app_structure.app_fontend.sidebar_menu.menu_buttons.category_pro": { $exists: true }
+            "app_structure.app_fontend.sidebar_menu.menu_buttons.auth_logic": { $exists: true }
         };
         const field = {
             path: "app_structure.app_fontend.sidebar_menu.menu_buttons",
-            category_pro: category_pro,
             domain: [main_domain],
+            auth_logic: [auth_logic],
             status: "show"
         };
         // 2) Gọi mongo_get_multi
@@ -39,12 +40,13 @@ export default async function sidebar_menu() {
         }
         // 4) Lấy mảng thực từ mongo_results
         menu_buttons = menu_buttons.mongo_results;
-        // console.log(menu_buttons);
         // 5) Lọc (filter) theo cả national_market
+
         let filter_category = menu_buttons.filter(item =>
             Array.isArray(item.national_market) &&
             item.national_market.includes(national_market)
         );
+        // console.log(filter_category);
         // Sắp xếp sao cho phần tử có stt nhỏ nhất nằm đầu tiên
         filter_category.sort((a, b) => a.stt - b.stt);
 
@@ -78,8 +80,13 @@ export default async function sidebar_menu() {
                     ...category,
                     data: filter_services
                 });
-                i++;
+            } else {
+                logic_done.push({
+                    ...category,
+                    data: []
+                });
             }
+            i++;
         }
 
         const output = { sidebar_menu: logic_done };

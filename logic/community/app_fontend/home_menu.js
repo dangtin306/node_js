@@ -78,8 +78,13 @@ export default async function home_menu() {
                     ...category,
                     data: filter_services
                 });
-                i++;
+            } else {
+                logic_done.push({
+                    ...category,
+                    data: []
+                });
             }
+            i++;
         }
 
         const output = { home_menu: logic_done };
