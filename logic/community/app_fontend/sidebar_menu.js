@@ -16,9 +16,9 @@ export default async function sidebar_menu() {
     const url_full = asyncLocalStorage.getStore().get('url_full');
     const url_param = asyncLocalStorage.getStore().get('url_param');
 
-    const apikey = url_param.apikey;
-    const main_domain = url_param.main_domain;
-    const national_market = url_param.national_market;
+    const apikey = data_post_api.apikey;
+    const main_domain = data_post_api.main_domain;
+    const national_market = data_post_api.national_market;
     const auth_logic = (apikey && apikey.length >= 5) ? 1 : 0;
 
     if (main_domain) {
