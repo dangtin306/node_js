@@ -101,11 +101,11 @@ export default async function sidebar_menu() {
 
         i = 0;
         const logic_done = [];
-        
+
         while (i < major_genres_done.length) {
             const category = major_genres_done[i];
             const option = category.option;
-        
+
             if (option) {
                 // 1) Lấy sub-categories
                 const query1 = {
@@ -115,6 +115,7 @@ export default async function sidebar_menu() {
                     path: `app_structure.app_fontend.home_menu.categories`,
                     category_pro: option,
                     domain: [main_domain],
+                    auth_logic: [auth_logic],
                     status: "show"
                 };
                 let res1 = await mongo_get_multi(query1, field1);
@@ -122,7 +123,7 @@ export default async function sidebar_menu() {
                     return res1;
                 }
                 const services1 = res1.mongo_results;
-        
+
                 // Lọc, sắp xếp, đổi tên trường sub-categories
                 const subcats = services1
                     .filter(item =>
@@ -135,7 +136,7 @@ export default async function sidebar_menu() {
                         label: category_name,
                         icon_src: category_img
                     }));
-        
+
                 // 2) Với mỗi subcat, gọi tiếp để lấy services con, gán vào subcat.data
                 for (let j = 0; j < subcats.length; j++) {
                     const sub = subcats[j];
@@ -165,14 +166,14 @@ export default async function sidebar_menu() {
                                 label: service_name,
                                 icon_src: service_img
                             }));
-                
+
                         sub.data = services2;
                     } else {
                         sub.data = [];
                     }
                 }
-                
-        
+
+
                 // 3) Push single object cha, với data = mảng subcats đã “độn” data con vào
                 logic_done.push({
                     ...category,
@@ -185,10 +186,10 @@ export default async function sidebar_menu() {
                     data: []
                 });
             }
-        
+
             i++;
         }
-        
+
 
 
         const output = { sidebar_menu: logic_done };
