@@ -48,20 +48,21 @@ export async function mongo_get_multi(query, field) {
           result: `$${field}`
         }
       });
+
     } else if (typeof field === "object" && field.path) {
       const { path, ...filters } = field;
       const filterKeys = Object.keys(filters);
 
       if (filterKeys.length > 0) {
-        // Tạo điều kiện tương ứng cho từng key trong filters
+        // Tạo điều kiện tương ứng cho từng key trong filters, đảm bảo trường null được coi như []
         const conditions = filterKeys.map(key => {
           const value = filters[key];
 
-          // Nếu value là mảng, điều kiện: item[key] (mảng) phải có ít nhất một phần tử trùng
+          // Nếu value là mảng, điều kiện: item[key] (null sẽ chuyển thành []) phải có ít nhất một phần tử trùng
           if (Array.isArray(value)) {
             return {
               $gt: [
-                { $size: { $setIntersection: [`$$item.${key}`, value] } },
+                { $size: { $setIntersection: [ { $ifNull: [`$$item.${key}`, []] }, value ] } },
                 0
               ]
             };
@@ -83,6 +84,7 @@ export async function mongo_get_multi(query, field) {
             }
           }
         });
+
       } else {
         // Nếu không có filter, chỉ project nguyên mảng
         pipeline.push({
@@ -92,6 +94,7 @@ export async function mongo_get_multi(query, field) {
           }
         });
       }
+
     } else {
       throw new Error("Invalid field parameter");
     }
@@ -103,6 +106,7 @@ export async function mongo_get_multi(query, field) {
       mongo_status: "success",
       mongo_results: items
     };
+
   } catch (error) {
     console.error("Error in mongo_get_multi:", error);
     return {
@@ -111,6 +115,7 @@ export async function mongo_get_multi(query, field) {
     };
   }
 }
+
 
 
 export async function count_document(query) {

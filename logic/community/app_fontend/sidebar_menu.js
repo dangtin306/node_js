@@ -63,6 +63,7 @@ export default async function sidebar_menu() {
                 const field = {
                     path: `app_structure.app_fontend.home_menu.${option}`,
                     domain: [main_domain],
+                    auth_logic: [auth_logic],
                     status: "show"
                 };
                 let services = await mongo_get_multi(query, field);
@@ -115,7 +116,6 @@ export default async function sidebar_menu() {
                     path: `app_structure.app_fontend.home_menu.categories`,
                     category_pro: option,
                     domain: [main_domain],
-                    auth_logic: [auth_logic],
                     status: "show"
                 };
                 let res1 = await mongo_get_multi(query1, field1);
