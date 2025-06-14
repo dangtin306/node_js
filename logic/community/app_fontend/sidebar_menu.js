@@ -24,7 +24,7 @@ export default async function sidebar_menu() {
     if (main_domain) {
         // 1) Chuẩn bị query và field
         const query = {
-            "app_structure.app_fontend.sidebar_menu.menu_buttons.auth_logic": { $exists: true }
+            "app_structure.app_fontend.sidebar_menu.menu_buttons": { $exists: true }
         };
         const field = {
             path: "app_structure.app_fontend.sidebar_menu.menu_buttons",
@@ -49,7 +49,6 @@ export default async function sidebar_menu() {
         // console.log(filter_major_genres);
         // Sắp xếp sao cho phần tử có stt nhỏ nhất nằm đầu tiên
         filter_major_genres.sort((a, b) => a.stt - b.stt);
-
         let i = 0;
         const major_genres_done = [];
         while (i < filter_major_genres.length) {
@@ -67,6 +66,8 @@ export default async function sidebar_menu() {
                     status: "show"
                 };
                 let services = await mongo_get_multi(query, field);
+
+                console.log(services);
                 if (services.mongo_status !== "success") {
                     return services;
                 }
