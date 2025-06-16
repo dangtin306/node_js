@@ -134,6 +134,11 @@
         "uri": "sidebar_menu",
         "module": "../../logic/community/app_fontend/sidebar_menu.js",
         "function": "sidebar_menu"
+      },
+      {
+        "uri": "translate",
+        "module": "../../logic/community/translate/translate.js",
+        "function": "translate"
       }
     ]
   },

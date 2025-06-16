@@ -16,6 +16,7 @@
   "description": "",
   "dependencies": {
     "@breezystack/lamejs": "^1.2.7",
+    "@google-cloud/translate": "^9.1.0",
     "audio-mixer": "^2.1.4",
     "axios": "^1.8.3",
     "bree": "^9.2.4",
