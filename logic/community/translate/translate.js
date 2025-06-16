@@ -19,7 +19,7 @@ export default async function translate() {
   const { content: html, location } = store.get('data_post_api');
 
   // Xác định đường dẫn key file
-  const defaultKeyPath = path.resolve(__dirname, '../../../servers/backend/google_cloud_key.json');
+  const defaultKeyPath = path.resolve(__dirname, '../../../servers/backend/hust_media_cloud.json');
   const keyFile = process.env.GOOGLE_APPLICATION_CREDENTIALS || defaultKeyPath;
   if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     console.warn(`GOOGLE_APPLICATION_CREDENTIALS not set, using fallback key file: ${defaultKeyPath}`);
