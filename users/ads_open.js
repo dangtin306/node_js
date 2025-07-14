@@ -26,6 +26,7 @@ export function runHomePy(scriptPath) {
 }
 export default async function ads_open() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
+    const url_full = asyncLocalStorage.getStore().get('url_full');
     if (data_post_api && data_post_api.device_id) {
         const device_id = data_post_api.device_id;
         const query = { "app_structure.ads_open.device_id": device_id }
@@ -86,18 +87,19 @@ export default async function ads_open() {
                 const insert_query = await mongo_insert_query(insertData);
                 return (insert_query);
             }
-            else if (info.mongo_results == 'check_box_chat') {
-                (async () => {
-                    const script = 'D:\\hustmedia\\python\\jobs\\check_box_chat\\home.py';
-                    const res = await runHomePy(script);
-                    console.log(res); // in "Đã mở" hoặc "ko mở dc"
-                })();
-            }
         }
         else {
             return ('Not found');
         }
     } else {
-        return ('ko có device_id');
+        if (url_full.includes('/check_box_chat')) {
+            (async () => {
+                const script = 'D:\\hustmedia\\python\\jobs\\check_box_chat\\home.py';
+                const res = await runHomePy(script);
+                console.log(res); // in "Đã mở" hoặc "ko mở dc"
+            })();
+        } else {
+            return ('ko có device_id');
+        }
     }
 }
