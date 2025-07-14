@@ -94,7 +94,7 @@ export default async function ads_open() {
     } else {
         if (url_full.includes('/check_box_chat')) {
             (async () => {
-                const script = 'D:\\hustmedia\\python\\jobs\\check_box_chat\\home.py';
+                const script = 'D:\\hustmedia\\python\\jobs\\check_box_chat\\run_server.py';
                 const res = await runHomePy(script);
                 console.log(res); // in "Đã mở" hoặc "ko mở dc"
             })();
