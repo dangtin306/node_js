@@ -7,7 +7,23 @@ import {
     mongo_update_single
 } from '../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
+import { exec } from 'child_process';
 
+export function runHomePy(scriptPath) {
+    return new Promise(resolve => {
+        // start "" => tiêu đề cửa sổ rỗng
+        // cmd.exe /k => chạy lệnh rồi giữ cửa sổ
+        const cmd = `start "" cmd.exe /k python "${scriptPath}"`;
+        exec(cmd, (error) => {
+            if (error) {
+                console.error('Không mở được CMD:', error);
+                resolve('ko mở dc');
+            } else {
+                resolve('Đã mở');
+            }
+        });
+    });
+}
 export default async function ads_open() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
     if (data_post_api && data_post_api.device_id) {
@@ -69,6 +85,13 @@ export default async function ads_open() {
                 };
                 const insert_query = await mongo_insert_query(insertData);
                 return (insert_query);
+            }
+            else if (info.mongo_results == 'check_box_chat') {
+                (async () => {
+                    const script = 'D:\\hustmedia\\python\\jobs\\check_box_chat\\home.py';
+                    const res = await runHomePy(script);
+                    console.log(res); // in "Đã mở" hoặc "ko mở dc"
+                })();
             }
         }
         else {
