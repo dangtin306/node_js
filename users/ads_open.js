@@ -60,7 +60,7 @@ export default async function ads_open() {
                     };
                     const info_update = await mongo_update_single(query, set_ads_open);
                     if (open_views < 2) {
-                        return ("0");
+                        return ("1");
                     } else {
                         return ("0");
                     }
