@@ -10,19 +10,19 @@ import { asyncLocalStorage } from '../requestContext.js';
 import { exec } from 'child_process';
 
 export function runHomePy(scriptPath) {
-  return new Promise(resolve => {
-    const cmd = `start "" cmd.exe /k python "${scriptPath}"`;
-    
-    // chỉ quan tâm đến việc start CMD thành công
-    exec(cmd, (error) => {
-      if (error) {
-        console.error('Không mở được CMD:', error);
-        resolve('ko mở dc');
-      } else {
-        resolve('Đã mở');
-      }
+    return new Promise(resolve => {
+        const cmd = `start "" cmd.exe /k python "${scriptPath}"`;
+
+        // chỉ quan tâm đến việc start CMD thành công
+        exec(cmd, (error) => {
+            if (error) {
+                console.error('Không mở được CMD:', error);
+                resolve('ko mở dc');
+            } else {
+                resolve('Đã mở');
+            }
+        });
     });
-  });
 }
 export default async function ads_open() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
@@ -96,7 +96,13 @@ export default async function ads_open() {
             (async () => {
                 const script = 'D:\\hustmedia\\python\\jobs\\check_box_chat\\run_server_box.py';
                 const res = await runHomePy(script);
-                return(res); // in "Đã mở" hoặc "ko mở dc"
+                return (res); // in "Đã mở" hoặc "ko mở dc"
+            })();
+        } else if (url_full.includes('/start_jop_tele')) {
+            (async () => {
+                const script = 'C:\\hustmedia4\\telegram\\server_check_mem.py';
+                const res = await runHomePy(script);
+                return (res); // in "Đã mở" hoặc "ko mở dc"
             })();
         } else {
             return ('ko có device_id');
