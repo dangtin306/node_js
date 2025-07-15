@@ -56,7 +56,7 @@ export default async function ads_open() {
                 console.log(isToday); // In ra true nếu cùng ngày, false nếu không
                 if (isToday) {
                     const set_ads_open = {
-                        $inc: { "app_structure.ads_open.$.open_views": 1 }
+                        $inc: { "app_structure.ads_open.$.open_views": open_views + 1 }
                     };
                     const info_update = await mongo_update_single(query, set_ads_open);
                     if (open_views < 2) {
