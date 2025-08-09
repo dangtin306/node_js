@@ -106,7 +106,7 @@ export default async function ads_open() {
             })();
         }  else if (url_full.includes('/server_paddleocr')) {
             (async () => {
-                const script = 'C:\\hustmedia\\python\\server_paddleocr.py';
+                const script = 'D:\\hustmedia\\python\\server_paddleocr.py';
                 const res = await runHomePy(script);
                 return (res); // in "Đã mở" hoặc "ko mở dc"
             })();
