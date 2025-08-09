@@ -104,7 +104,13 @@ export default async function ads_open() {
                 const res = await runHomePy(script);
                 return (res); // in "Đã mở" hoặc "ko mở dc"
             })();
-        } else {
+        }  else if (url_full.includes('/server_paddleocr')) {
+            (async () => {
+                const script = 'C:\\hustmedia4\\telegram\\server_paddleocr.py';
+                const res = await runHomePy(script);
+                return (res); // in "Đã mở" hoặc "ko mở dc"
+            })();
+        }  else {
             return ('ko có device_id');
         }
     }
