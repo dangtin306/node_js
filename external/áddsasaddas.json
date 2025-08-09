@@ -1,0 +1,87 @@
+[
+    {
+        "to": "/reactapp/hustadmin/worker",
+        "text": "Quản lý nhân viên",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/hustadmin/member",
+        "text": "Quản lý thành viên",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/hustadmin/orders",
+        "text": "Quản lý đơn hàngg",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/hustadmin/donate",
+        "text": "Danh sách donate",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/hustadmin/deposit",
+        "text": "Danh sách rút tiền",
+        "level_manage": 1
+    },
+    {
+        "to": "/shop/main/home?webappmode=hustadmin",
+        "text": "Danh sách home client cũ",
+        "level_manage": 1
+    },
+    {
+        "to": "/shop/main/menu?webappmode=hustadmin",
+        "text": "Danh sách jop",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/hustadmin/videos_maker",
+        "text": "Danh sách video",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/hustadmin/views_links",
+        "text": "Danh sách vượt links",
+        "level_manage": 1
+    },
+    {
+        "to": "/shop/e-commerce/exchange",
+        "text": "Danh sách bán xu",
+        "level_manage": 1
+    },
+    {
+        "to": "/shop/tasks/hustadmin",
+        "text": "Nhiệm vụ vượt link",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/hustadmin/memory/home",
+        "text": "Kỷ niệm",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/test_json?query=app_structure.app_fontend.sidebar_menu&main_domain=true",
+        "text": "sidebar_menu_old",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/test_json?query=app_structure.app_fontend.home_menu.major_genres",
+        "text": "major_genres",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/test_json?query=app_structure.app_fontend.home_menu.categories",
+        "text": "home_categories",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/test_json?query=app_structure.app_fontend.home_menu.services",
+        "text": "home_services",
+        "level_manage": 1
+    },
+    {
+        "to": "/reactapp/test_json?query=app_structure.app_fontend.sidebar_menu.menu_buttons",
+        "text": "sidebar_menu",
+        "level_manage": 1
+    }
+]

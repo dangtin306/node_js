@@ -7,6 +7,7 @@ import {
     mongo_update_single
 } from '../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
+import { getConnection } from './db.js';
 
 
 export default async function giang() {

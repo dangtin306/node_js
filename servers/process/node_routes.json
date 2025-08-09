@@ -70,6 +70,11 @@
         "uri": "editor",
         "module": "../../users/editor.js",
         "function": "editor"
+      },
+      {
+        "uri": "admin",
+        "module": "../../users/admin/general.js",
+        "function": "admin"
       }
     ]
   },
