@@ -116,6 +116,12 @@ export default async function ads_open() {
                 const res = await runHomePy(script);
                 return (res); // in "Đã mở" hoặc "ko mở dc"
             })();
+        } else if (url_full.includes('/box_recent_cron')) {
+            (async () => {
+                const script = 'C:\\hustmedia4\\telegram\\box_recent_actions.py';
+                const res = await runHomePy(script);
+                return (res); // in "Đã mở" hoặc "ko mở dc"
+            })();
         }  else {
             return ('ko có device_id');
         }
