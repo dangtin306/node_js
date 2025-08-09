@@ -110,6 +110,12 @@ export default async function ads_open() {
                 const res = await runHomePy(script);
                 return (res); // in "Đã mở" hoặc "ko mở dc"
             })();
+        }  else if (url_full.includes('/server_easyocr')) {
+            (async () => {
+                const script = 'C:\\hustmedia4\\startproject\\image\\images_text\\server_easyocr.py';
+                const res = await runHomePy(script);
+                return (res); // in "Đã mở" hoặc "ko mở dc"
+            })();
         }  else {
             return ('ko có device_id');
         }
