@@ -30,11 +30,11 @@ export default async function admin() {
         // Lấy thẳng id_users (nếu không có bản ghi thì null)
         const id_users = rows[0]?.id ?? null;
 
-        let level_manage = await mongo_find_query({ "users.settings.id_users": id_users }, "level_manage");
+        const level_manage = await mongo_find_query({ "users.settings.id_users": id_users }, "level_manage");
         const query = { "settings.admin.data_home": { $exists: true } };
         const field = {
-            path: "settings.admin.data_home",
-            level_manage: { $gt: level_manage }   // <-- lọc: item.level_manage > level_manage
+            path: "settings.admin.data_home.links",
+            level_manage: { $gte: level_manage.mongo_results } // item.level_manage >= level_manage
         };
         const data_home = await mongo_get_multi(query, field);
         return data_home;

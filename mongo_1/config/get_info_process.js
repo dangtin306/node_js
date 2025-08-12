@@ -43,95 +43,109 @@ export async function mongo_get_multi(query, field) {
 
     if (typeof field === "string") {
       pipeline.push({
-        $project: { _id: 0, result: `$${field}` }
+        $project: {
+          _id: 0,
+          result: `$${field}`
+        }
       });
+
     } else if (typeof field === "object" && field.path) {
       const { path, ...filters } = field;
       const filterKeys = Object.keys(filters);
 
       if (filterKeys.length > 0) {
+
         const conditions = filterKeys.map(key => {
           const value = filters[key];
+          const itemExpr = `$$item.${key}`; // hỗ trợ cả key dạng 'a.b'
 
+          // 1) Nếu value là mảng => kiểm tra giao > 0 (null coi như [])
           if (Array.isArray(value)) {
             return {
               $gt: [
-                { $size: { $setIntersection: [{ $ifNull: [`$$item.${key}`, []] }, value] } },
+                { $size: { $setIntersection: [ { $ifNull: [itemExpr, []] }, value ] } },
                 0
               ]
             };
           }
 
-          if (value && typeof value === "object" && !Array.isArray(value)) {
-            const ops = Object.keys(value).map(op => {
-              const v = value[op];
+          // 2) Nếu value là object và chứa operator ($...) => xử lý từng operator
+          if (value && typeof value === "object" && Object.keys(value).some(k => k.startsWith("$"))) {
+            const opExprs = Object.entries(value).map(([op, v]) => {
+              console.log(value);
               switch (op) {
-                case "$gt":  return { $gt: [`$$item.${key}`, v] };
-                case "$gte": return { $gte: [`$$item.${key}`, v] };
-                case "$lt":  return { $lt: [`$$item.${key}`, v] };
-                case "$lte": return { $lte: [`$$item.${key}`, v] };
-                case "$ne":  return { $ne: [`$$item.${key}`, v] };
-                case "$in":  return { $in: [`$$item.${key}`, v] };
-                case "$nin": return { $not: { $in: [`$$item.${key}`, v] } };
+                case "$gte":
+                case "$lte":
+                case "$gt":
+                case "$lt":
+                case "$eq":
+                case "$ne":
+                  return { [op]: [ itemExpr, v ] };
+                case "$in":
+                  // item phải nằm trong mảng v
+                  return { $in: [ itemExpr, v ] };
+                case "$nin":
+                  return { $not: { $in: [ itemExpr, v ] } };
                 case "$exists":
-                  return value.$exists ? { $ne: [`$$item.${key}`, null] } : { $eq: [`$$item.${key}`, null] };
+                  // v == true/false
+                  return { $cond: [ { $eq: [v, true] }, { $ne: [ itemExpr, null ] }, { $eq: [ itemExpr, null ] } ] };
                 default:
-                  throw new Error(`Unsupported operator ${op} for key ${key}`);
+                  // Nếu gặp operator chưa hỗ trợ, cố gắng dùng generic
+                  return { [op]: [ itemExpr, v ] };
               }
             });
-            return ops.length === 1 ? ops[0] : { $and: ops };
+
+            // nếu có nhiều operator trên cùng key => kết hợp bằng $and
+            return opExprs.length === 1 ? opExprs[0] : { $and: opExprs };
           }
 
-          return { $eq: [`$$item.${key}`, value] };
+          // 3) Giá trị nguyên thủy => so sánh bằng
+          return { $eq: [ itemExpr, value ] };
         });
-
-        // Ensure the $filter input is ALWAYS an array:
-        const arrayInput = {
-          $cond: [
-            { $isArray: `$${path}` },          // if it's already an array -> use it
-            `$${path}`,
-            {                                    // else if not null -> wrap it into an array, otherwise empty array
-              $cond: [
-                { $ne: [`$${path}`, null] },
-                [ `$${path}` ],
-                []
-              ]
-            }
-          ]
-        };
 
         pipeline.push({
           $project: {
             _id: 0,
             result: {
               $filter: {
-                input: arrayInput,
+                input: `$${path}`,
                 as: "item",
                 cond: { $and: conditions }
               }
             }
           }
         });
+
       } else {
+        // Nếu không có filter, chỉ project nguyên mảng
         pipeline.push({
-          $project: { _id: 0, result: `$${path}` }
+          $project: {
+            _id: 0,
+            result: `$${path}`
+          }
         });
       }
+
     } else {
       throw new Error("Invalid field parameter");
     }
 
     const results = await collection.aggregate(pipeline).toArray();
-    const items = results.flatMap(doc => (Array.isArray(doc.result) ? doc.result : []));
+    const items = results.flatMap(doc => doc.result || []);
 
-    return { mongo_status: "success", mongo_results: items };
+    return {
+      mongo_status: "success",
+      mongo_results: items
+    };
+
   } catch (error) {
     console.error("Error in mongo_get_multi:", error);
-    return { mongo_status: "cancel", mongo_results: error.message };
+    return {
+      mongo_status: "cancel",
+      mongo_results: error.message
+    };
   }
 }
-
-
 
 
 export async function count_document(query) {
