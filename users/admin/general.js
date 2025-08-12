@@ -33,30 +33,11 @@ export default async function admin() {
         let level_manage = await mongo_find_query({ "users.settings.id_users": id_users }, "level_manage");
         const query = { "settings.admin.data_home": { $exists: true } };
         const field = {
-            path: "settings.admin.data_home"
+            path: "settings.admin.data_home",
+            level_manage: { $gt: level_manage }   // <-- lọc: item.level_manage > level_manage
         };
         const data_home = await mongo_get_multi(query, field);
         return data_home;
-
-        // // Extract necessary fields from the posted data
-        // const { device_id, device_title } = data_post_api;
-
-        // if (!device_id || !device_title) {
-        //     return { error: "device_id and device_title are required" };
-        // }
-
-        // // MongoDB query to update only the device_title field
-        // const updateResult = await mongo_update_single(
-        //     // Query to find the correct device
-        //     { "external_connect.devices.lists.device_id": device_id },
-        //     {
-        //         $set: {
-        //             "external_connect.devices.lists.$.device_title": device_title
-        //         }
-        //     }
-        // );
-
-        // return updateResult;
     } else if (url_full.includes('/edit_2')) {
         // Destructure necessary fields
         const {

@@ -43,32 +43,58 @@ export async function mongo_get_multi(query, field) {
 
     if (typeof field === "string") {
       pipeline.push({
-        $project: {
-          _id: 0,
-          result: `$${field}`
-        }
+        $project: { _id: 0, result: `$${field}` }
       });
-
     } else if (typeof field === "object" && field.path) {
       const { path, ...filters } = field;
       const filterKeys = Object.keys(filters);
 
       if (filterKeys.length > 0) {
-        // Tạo điều kiện tương ứng cho từng key trong filters, đảm bảo trường null được coi như []
         const conditions = filterKeys.map(key => {
           const value = filters[key];
 
-          // Nếu value là mảng, điều kiện: item[key] (null sẽ chuyển thành []) phải có ít nhất một phần tử trùng
+          // nếu value là mảng -> dùng setIntersection như bạn đã làm
           if (Array.isArray(value)) {
             return {
               $gt: [
-                { $size: { $setIntersection: [ { $ifNull: [`$$item.${key}`, []] }, value ] } },
+                { $size: { $setIntersection: [{ $ifNull: [`$$item.${key}`, []] }, value] } },
                 0
               ]
             };
           }
 
-          // Ngược lại, so sánh chính xác
+          // nếu value là object và chứa operator(s)
+          if (value && typeof value === "object" && !Array.isArray(value)) {
+            // map operator sang aggregation expression
+            const ops = Object.keys(value).map(op => {
+              const v = value[op];
+              switch (op) {
+                case "$gt":
+                  return { $gt: [`$$item.${key}`, v] };
+                case "$gte":
+                  return { $gte: [`$$item.${key}`, v] };
+                case "$lt":
+                  return { $lt: [`$$item.${key}`, v] };
+                case "$lte":
+                  return { $lte: [`$$item.${key}`, v] };
+                case "$ne":
+                  return { $ne: [`$$item.${key}`, v] };
+                case "$in":
+                  // đảm bảo $$item.key có thể là null => dùng $ifNull
+                  return { $in: [`$$item.${key}`, v] };
+                case "$nin":
+                  return { $not: { $in: [`$$item.${key}`, v] } };
+                case "$exists":
+                  return value.$exists ? { $ne: [`$$item.${key}`, null] } : { $eq: [`$$item.${key}`, null] };
+                default:
+                  throw new Error(`Unsupported operator ${op} for key ${key}`);
+              }
+            });
+            // nếu nhiều operator, kết hợp bằng $and
+            return ops.length === 1 ? ops[0] : { $and: ops };
+          }
+
+          // mặc định: so sánh bằng
           return { $eq: [`$$item.${key}`, value] };
         });
 
@@ -84,35 +110,23 @@ export async function mongo_get_multi(query, field) {
             }
           }
         });
-
       } else {
-        // Nếu không có filter, chỉ project nguyên mảng
         pipeline.push({
-          $project: {
-            _id: 0,
-            result: `$${path}`
-          }
+          $project: { _id: 0, result: `$${path}` }
         });
       }
-
     } else {
       throw new Error("Invalid field parameter");
     }
 
     const results = await collection.aggregate(pipeline).toArray();
-    const items = results.flatMap(doc => doc.result);
+    // bảo vệ trường hợp result không phải mảng hoặc undefined
+    const items = results.flatMap(doc => (Array.isArray(doc.result) ? doc.result : []));
 
-    return {
-      mongo_status: "success",
-      mongo_results: items
-    };
-
+    return { mongo_status: "success", mongo_results: items };
   } catch (error) {
     console.error("Error in mongo_get_multi:", error);
-    return {
-      mongo_status: "cancel",
-      mongo_results: error.message
-    };
+    return { mongo_status: "cancel", mongo_results: error.message };
   }
 }
 
