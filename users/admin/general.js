@@ -38,7 +38,7 @@ export default async function admin() {
         };
         let data_home = await mongo_get_multi(query, field);
         data_home = data_home.mongo_results;
-        data_home = { Link: data_home };
+        data_home = { links: data_home };
 
         return data_home;
     } else if (url_full.includes('/edit_2')) {
