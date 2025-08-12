@@ -36,7 +36,10 @@ export default async function admin() {
             path: "settings.admin.data_home.links",
             level_manage: { $gte: level_manage.mongo_results } // item.level_manage >= level_manage
         };
-        const data_home = await mongo_get_multi(query, field);
+        let data_home = await mongo_get_multi(query, field);
+        data_home = data_home.mongo_results;
+        data_home = { Link: data_home };
+
         return data_home;
     } else if (url_full.includes('/edit_2')) {
         // Destructure necessary fields
