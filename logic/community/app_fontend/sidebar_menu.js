@@ -107,6 +107,7 @@ export default async function sidebar_menu() {
         while (i < major_genres_done.length) {
             const category = major_genres_done[i];
             const option = category.option;
+            const category_services = category.category_services;
 
             if (option) {
                 // 1) Lấy sub-categories
@@ -179,6 +180,38 @@ export default async function sidebar_menu() {
                 logic_done.push({
                     ...category,
                     data: subcats
+                });
+            } else if (category_services) {
+                // Lấy tất cả services cho 1 category (category_services là string)
+                const query = {
+                    "app_structure.app_fontend.home_menu.services": { $exists: true }
+                };
+                const field = {
+                    path: "app_structure.app_fontend.home_menu.services",
+                    status: "show",
+                    category: category_services  // <-- dùng string trực tiếp
+                };
+                let res = await mongo_get_multi(query, field);
+                if (res.mongo_status !== "success") {
+                    return res;
+                }
+
+                const services = res.mongo_results
+                    .filter(item =>
+                        Array.isArray(item.national_market) &&
+                        item.national_market.includes(national_market)
+                    )
+                    .sort((a, b) => (a.stt || 0) - (b.stt || 0))
+                    .map(({ service_name, service_img, ...rest }) => ({
+                        ...rest,
+                        label: service_name,
+                        icon_src: service_img
+                    }));
+
+                // Gán trực tiếp mảng services vào data của category
+                logic_done.push({
+                    ...category,
+                    data: services
                 });
             } else {
                 // không có option → giữ nguyên, data = []
