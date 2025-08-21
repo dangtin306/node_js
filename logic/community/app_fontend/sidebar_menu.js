@@ -189,13 +189,12 @@ export default async function sidebar_menu() {
                 const field = {
                     path: "app_structure.app_fontend.home_menu.services",
                     status: "show",
-                    category: category_services  // <-- dùng string trực tiếp
+                    category: [category_services]  // <-- dùng string trực tiếp
                 };
                 let res = await mongo_get_multi(query, field);
                 if (res.mongo_status !== "success") {
                     return res;
                 }
-
                 const services = res.mongo_results
                     .filter(item =>
                         Array.isArray(item.national_market) &&
