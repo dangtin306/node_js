@@ -118,7 +118,8 @@ export default async function sidebar_menu() {
                     path: `app_structure.app_fontend.home_menu.categories`,
                     category_pro: option,
                     domain: [main_domain],
-                    status: "show"
+                    status: "show",
+                    status_sidebar: "show"
                 };
                 let res1 = await mongo_get_multi(query1, field1);
                 if (res1.mongo_status !== "success") {
