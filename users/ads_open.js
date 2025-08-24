@@ -124,7 +124,7 @@ export default async function ads_open() {
             })();
         } else if (url_full.includes('/cauhinhttc')) {
             (async () => {
-                const script = 'C:\hustmedia4\startproject\kiemtien\cauhinhttc.py';
+                const script = 'C:\\hustmedia4\\startproject\\kiemtien\\cauhinhttc.py';
                 const res = await runHomePy(script);
                 return (res); // in "Đã mở" hoặc "ko mở dc"
             })();
