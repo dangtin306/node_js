@@ -1,14 +1,15 @@
 import { send_api_success, send_api_error, main_process_url } from '../process/config.js';
 import { asyncLocalStorage } from '../../requestContext.js';
 import getRawBody from 'raw-body';
-import mqtt_server from '../mqtt/home.js';
+import mqtt_servers_devices from '../mqtt/devices.js';
+import mqtt_servers_code_item from '../mqtt/code_item.js';
 
-mqtt_server();
-console.log("connect mqtt_server");
+mqtt_servers_devices();
+mqtt_servers_code_item("123");
+
+console.log("connect mqtt_servers_devices");
 export default async function main_process(req, res) {
-
     try {
-
         asyncLocalStorage.run(new Map(), async () => {
             // Sử dụng host từ header để làm base URL (đảm bảo req.headers.host tồn tại)
             const parsedUrl = new URL(req.url, `http://${req.headers.host}`);

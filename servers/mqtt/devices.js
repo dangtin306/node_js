@@ -8,7 +8,7 @@ let isMqttServerInitialized = false;
 // Biến lưu trữ client để sử dụng cho các lần gọi sau
 let client = null;
 
-export default async function mqtt_server(device_id, passedMessage) {
+export default async function mqtt_servers_devices(device_id, passedMessage) {
     // Nếu server đã khởi tạo rồi, chỉ cần gửi message nếu có và thoát luôn
     if (isMqttServerInitialized) {
         if (passedMessage) {

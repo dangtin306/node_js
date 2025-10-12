@@ -106,7 +106,7 @@
       {
         "uri": "mqtt",
         "module": "../../external/mqtt/test.js",
-        "function": "mqtt_server"
+        "function": "mqtt_servers_devices"
       },
       {
         "uri": "check_live",

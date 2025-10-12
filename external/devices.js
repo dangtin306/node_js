@@ -10,7 +10,7 @@ import {
     mongo_update_multi
 } from '../mongo_1/config/main_process.js';
 import { asyncLocalStorage } from '../requestContext.js';
-import mqtt_server from '../servers/mqtt/home.js';
+import mqtt_servers_devices from '../servers/mqtt/devices.js';
 
 export default async function devices() {
     const data_post_api = asyncLocalStorage.getStore().get('data_post_api');
@@ -135,7 +135,7 @@ export default async function devices() {
             $set: { "external_connect.devices.lists.$.volume": command_action }
         };
         const info = await mongo_update_single(query, set);
-        mqtt_server(device_id, data);
+        mqtt_servers_devices(device_id, data);
         return info;
     } 
     else if (url_full.includes('/device_restart')) {
@@ -150,7 +150,7 @@ export default async function devices() {
 
         // Chuyển đối tượng thành chuỗi JSON và in ra console
         data = JSON.stringify(data);
-        mqtt_server(device_id, data);
+        mqtt_servers_devices(device_id, data);
         return "ok";
     }
     else if (url_full.includes('/radio_restart')) {
@@ -165,7 +165,7 @@ export default async function devices() {
 
         // Chuyển đối tượng thành chuỗi JSON và in ra console
         data = JSON.stringify(data);
-        mqtt_server(device_id, data);
+        mqtt_servers_devices(device_id, data);
         return data_post_api;
     }
     else {
