@@ -123,6 +123,16 @@
         "uri": "text_to_speech",
         "module": "../../ai/text_to_speech.js",
         "function": "text_to_speech"
+      },
+      {
+        "uri": "checkscam",
+        "children": [
+          {
+            "uri": "posts_data",
+            "module": "../../logic/checkscam/posts_data.js",
+            "function": "posts_data"
+          }
+        ]
       }
     ]
   },
