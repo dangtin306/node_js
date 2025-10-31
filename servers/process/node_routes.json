@@ -131,6 +131,11 @@
             "uri": "posts_data",
             "module": "../../logic/checkscam/posts_data.js",
             "function": "posts_data"
+          },
+          {
+            "uri": "check_data",
+            "module": "../../logic/checkscam/check_data.js",
+            "function": "check_data"
           }
         ]
       }
