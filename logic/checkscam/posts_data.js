@@ -15,18 +15,17 @@ export default async function posts_data() {
     const url_full = asyncLocalStorage.getStore().get('url_full');
     const url_param = asyncLocalStorage.getStore().get('url_param');
 
-    const apikey = url_param.apikey;
-    const category_pro = url_param.category_pro;
-    const main_domain = url_param.main_domain;
-    const national_market = url_param.national_market;
+    const category = data_post_api.category;
+    const data_scam = data_post_api.data_scam;
 
     if (data_post_api.value === 'test') {
         const info = await mongo_insert_query({
-            "services.checkscam.datascam.facebook": {"ok": 'test'}
+            "services.checkscam.datascam.facebook": { "ok": 'test' }
         }); return info;
-    } 
- 
-    return (data_post_api);
-
+    } else if (data_post_api.value) {
+        const info = await mongo_insert_query({
+            [`services.checkscam.datascam.${category}`]: data_scam
+        }); return info;
+    }
 }
 // ...existing code...

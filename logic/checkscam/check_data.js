@@ -17,17 +17,19 @@ export default async function check_data() {
 
     const apikey = url_param.apikey;
     const category_pro = url_param.category_pro;
-    const main_domain = url_param.main_domain;
-    const id_data = data_post_api.id_data;
+    const mode = data_post_api.mode;
+    const query = data_post_api.query;
 
-    if (data_post_api.mode === 'detect') {
-        
-        const query = {
-            "services.checkscam.data_scam.facebook.id_data": id_data
-        }
-        const info = await mongo_detect_single(query); return info;
+    if (mode === 'detect') {
+        const value = data_post_api.value;
+        const category = data_post_api.category;
+        const query_sql = {
+            [`${query}.${category}`]: value
+        };
+        const info = await mongo_detect_single(query_sql); return info;
     } else {
         return (data_post_api);
     }
 }
+
 // ...existing code...
