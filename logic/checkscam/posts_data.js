@@ -20,11 +20,11 @@ export default async function posts_data() {
 
     if (data_post_api.value === 'test') {
         const info = await mongo_insert_query({
-            "services.checkscam.datascam.facebook": { "ok": 'test' }
+            "services.checkscam.data_scam.facebook": { "ok": 'test' }
         }); return info;
     } else if (data_post_api.category) {
         const info = await mongo_insert_query({
-            [`services.checkscam.datascam.${category}`]: data_scam
+            [`services.checkscam.data_scam.${category}`]: data_scam
         }); return info;
     } else {
         return 'không hợp lệ';
